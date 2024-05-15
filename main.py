@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, redirect, url_for, jsonify, flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, IntegerField, SelectField, SubmitField
 from wtforms.validators import DataRequired, InputRequired, Length
@@ -56,6 +56,10 @@ def login():
 
 @app.route('/register')
 def register():
+    if request.method == 'POST':
+        firstname = request.form['firstName']
+
+        return jsonify({'success': False, 'message': 'User successfully registered.'})
     return render_template("register.html")
 
 @app.route('/sale_dresses')
@@ -118,4 +122,4 @@ def checkout():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port=5002, debug=True)

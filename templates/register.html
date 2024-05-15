@@ -5,7 +5,8 @@
     <h2 class="text-center mt-3" style="color: white; margin-bottom: 20px">
       Sign Up
     </h2>
-    <form class="custom-form">
+
+    <form class="custom-form" id="signup-form">
       <div class="mb-3 mt-3">
         <label for="firstName" class="form-label"
           ><i class="fa-solid fa-user"></i>First Name</label
@@ -18,6 +19,7 @@
           required
         />
       </div>
+
       <div class="mb-3">
         <label for="lastName" class="form-label"
           ><i class="fa-solid fa-user"></i>Last Name</label
@@ -30,6 +32,33 @@
           required
         />
       </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label"
+          ><i class="fa-solid fa-user"></i>Email</label
+        >
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          name="email"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label"
+          ><i class="fa-solid fa-user"></i>Password</label
+        >
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          name="password"
+          required
+        />
+      </div>
+
       <div class="mb-3">
         <label for="age" class="form-label">Age</label>
         <input
@@ -53,6 +82,7 @@
           Register
         </button>
       </div>
+      <span id="signup-message" class="text-danger"></span>
     </form>
   </div>
 </section>
