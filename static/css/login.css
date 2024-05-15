@@ -1,0 +1,70 @@
+/* body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+} */
+
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+input[type="text"],
+input[type="password"],
+input[type="submit"],
+input[type="checkbox"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+input[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 60%; /* Make button 80% width */
+    margin-left: 20%; /* Center the button */
+    margin-right: 20%;
+ }
+
+input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.forgot-password,
+.sign-up {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.forgot-password a,
+.sign-up a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.checkbox-container {
+    display: inline-flex;
+    align-items: right;
+}
+
+.checkbox-container input[type="checkbox"] {
+    margin-right: 10px; 
+}
+
+.remember-me {
+    display: inline-block;
+    width: 100%;
+    text-align: left;
+}

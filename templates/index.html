@@ -1,0 +1,92 @@
+{% include "header.html" %}
+
+<!-- main -->
+<div class="px-4 pt-5 my-5 text-center border-bottom">
+  <h1 class="display-4 fw-bold text-body-emphasis">What's Special About Us</h1>
+  <div class="col-lg-6 mx-auto">
+    <p class="lead mb-4">
+      We envisage ourselves as the best online shopping experience for customers
+      worldwide, providing truly international fashion statements. The aim is to
+      source the best fashion and spread its magic.
+    </p>
+    <h4>Let's Get Started</h4>
+    <p class="lead mb-4">
+      A warm welcome to this amazing journey for the best shopping experience.
+    </p>
+    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
+      <button type="button" class="btn btn-outline-secondary btn-lg px-4">
+        <a href="\product">Start Shopping</a>
+      </button>
+      <button type="button" class="btn btn-dark btn-lg px-4 me-sm-3">
+        Sale Items
+      </button>
+    </div>
+  </div>
+</div>
+<div id="carouselExampleIndicators" class="carousel slide">
+  <div class="carousel-indicators">
+    <button
+      type="button"
+      data-bs-target="#carouselExampleIndicators"
+      data-bs-slide-to="0"
+      class="active"
+      aria-current="true"
+      aria-label="Slide 1"
+    ></button>
+    <button
+      type="button"
+      data-bs-target="#carouselExampleIndicators"
+      data-bs-slide-to="1"
+      aria-label="Slide 2"
+    ></button>
+    <button
+      type="button"
+      data-bs-target="#carouselExampleIndicators"
+      data-bs-slide-to="2"
+      aria-label="Slide 3"
+    ></button>
+  </div>
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img
+        src="./static/img/clothes3_.jpg"
+        class="d-block w-100"
+        alt="clothes"
+      />
+    </div>
+    <div class="carousel-item">
+      <img
+        src="./static/img/clothes4_.jpg"
+        class="d-block w-100"
+        alt="clothes"
+      />
+    </div>
+    <div class="carousel-item">
+      <img
+        src="./static/img/clothes2_.jpg"
+        class="d-block w-100"
+        alt="clothes"
+      />
+    </div>
+  </div>
+  <button
+    class="carousel-control-prev"
+    type="button"
+    data-bs-target="#carouselExampleIndicators"
+    data-bs-slide="prev"
+  >
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button
+    class="carousel-control-next"
+    type="button"
+    data-bs-target="#carouselExampleIndicators"
+    data-bs-slide="next"
+  >
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+{% include "footer.html" %}

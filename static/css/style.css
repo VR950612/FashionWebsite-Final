@@ -1,0 +1,147 @@
+.feature-icon {
+    width: 4rem;
+    height: 4rem;
+    border-radius: .75rem;
+}
+
+.navbar-brand {
+    font-family: "Pacifico", cursive;
+    font-weight: 600;
+    font-style: italic;
+    font-size: 50px;
+  }
+  
+.nav-link{
+ font-size: x-large;
+ }
+
+.dropdown-toggle{
+    color: red;
+    font-weight: bold;
+    font-size: x-large;
+}
+
+/* .py-5 {
+    background-color: black;
+    color: white;
+    padding: 20px;
+    text-align: center;
+} */
+
+footer{
+    background-color: black;
+    color: white; /* Text color */
+    padding: 20px;
+    text-align: center;
+}
+
+.h6{
+    text-align: center;
+}
+
+.height {
+    height: 300px;
+}
+
+.wordings {
+    background-color: lightcoral;
+    width: 100%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-style: italic;
+    color: white;
+    font-size: larger;
+    text-align: center;
+}
+
+.new-arrival {
+    margin-left: 110px;
+    padding-top: 20px;
+    font-size: x-large;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-weight: 600;
+}
+
+.best-seller {
+    margin-left: 10px;
+    padding-top: 5px;
+    font-size: x-large;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-weight: 600;
+}
+
+.sale {
+    margin-left: 10px;
+    padding-top: 50px;
+    font-size: xx-large;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    color: red;
+    font-weight: 600;
+    font-style: bold;
+}
+
+.strikethrough {
+    text-decoration: line-through;
+}
+
+.price-1 {
+    color: red;
+    font-weight: bold;
+}
+
+.best-sellers-dress{
+    margin-left: 10px;
+    margin-top: 30px;
+    padding-top: 30px;
+    font-size: x-large;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-weight: 600;
+}
+
+header.masthead {
+    position: relative;
+    margin-top: 4rem;
+    margin-bottom: 10rem;
+    padding-top: calc(20rem + 75px);
+    padding-bottom: 20rem;
+    background: no-repeat center center;
+    background-color: #6c757d;
+    background-size: cover;
+    background-attachment: scroll;
+  }
+
+  .gradient-background {
+    background: linear-gradient(300deg, #011318, #0621f1, hsl(7, 80%, 69%));
+    background-size: 180% 180%;
+    animation: gradient-animation 18s ease infinite;
+  }
+
+  .custom-form {
+    max-width: 400px; /* Adjust the maximum width of the form */
+    margin: 0 auto; /* Center the form horizontally */
+    padding: 20px; /* Add padding to the form */
+    background-color: rgba(255, 255, 255, 0.8); /* Set background color with some transparency */
+    border-radius: 10px; /* Add border radius for rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow for depth */
+  }
+
+  .btn-pink {
+    background-color: #ec60a6;
+    color: white; /* Ensures the text is readable against the pink background */
+    /* You can also customize other button properties such as border color, etc. */
+}
+
+  .login-background {
+    background-image: url('/static/img/sale.jpg'); /* Replace with your image path */
+    background-size: cover;
+    background-position: center;
+    padding: 50px 0; /* Adjust padding as needed */
+}
+
+.login-background{
+    background-image: url('\static\img\sale.jpg');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+}
