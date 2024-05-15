@@ -4,7 +4,13 @@ from wtforms import StringField, PasswordField, IntegerField, SelectField, Submi
 from wtforms.validators import DataRequired, InputRequired, Length
 from flask_bootstrap import Bootstrap5  # pip install bootstrap-flask
 
+import requests
+
 app = Flask(__name__)
+
+USER_API_BASE_URL = "http://localhost:5000/"
+PRODUCT_CATEGORY_API_BASE_URL = "http://localhost:5001/"
+
 
 class SignupForm(FlaskForm):
     first_name = StringField('First Name', validators=[InputRequired(), Length(min=2, max=50)])
@@ -54,12 +60,57 @@ def jumpsuit():
 def login():
     return render_template("login.html")
 
-@app.route('/register')
+@app.route('/register', methods=['GET','POST'])
 def register():
     if request.method == 'POST':
-        firstname = request.form['firstName']
+        #first grab all data from the form's variable i.e. the name property
+        first_name = request.form['firstName']
+        last_name = request.form['lastName']
+        email = request.form['email']
+        password = request.form['password']
+        age = int(request.form['age'])
+        gender = request.form['gender-select']
 
-        return jsonify({'success': False, 'message': 'User successfully registered.'})
+        print(type(age))
+
+        # Put this and store it in the post data variable
+        new_user_post_data = {
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": email,
+            "password":password,
+            "age": age,
+            "gender":gender
+        }
+
+        print(new_user_post_data)
+
+        REGISTER_NEW_USER_URL = USER_API_BASE_URL + "user"
+
+        headers = {
+            'Content-type':'application/json', 
+            'Accept':'application/json'
+        }
+
+        register_new_user_response = requests.post(
+            url=REGISTER_NEW_USER_URL,
+            headers=headers, 
+            json=new_user_post_data
+        )
+        print(register_new_user_response)
+        print(register_new_user_response.status_code)
+        #print(register_new_user_response)
+
+        try:
+            if register_new_user_response.status_code == 200:
+                # This response message must get passed to the front end registration form
+                return jsonify({'success': True, 'message': 'User successfully registered'})
+            else:
+                # This response message must get passed to the front end registration form
+                return jsonify({'success': False, 'message': 'Whoops something went wrong while registering this user. Try again later'})
+        except:
+            return jsonify({'success': False, 'message': 'Whoops something went wrong while registering this user. Try again later'})
+        
     return render_template("register.html")
 
 @app.route('/sale_dresses')
