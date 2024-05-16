@@ -61,48 +61,98 @@ def jumpsuit():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if request.method == 'GET':
-        return render_template("login.html")
+    if request.method == 'POST':
+        #first grab all data from the form's variable i.e. the name property
+        email = request.form['email']
+        password = request.form['password']
     
-    login_form = LoginForm(request.form)  # Initialize form with request data
-    if login_form.validate_on_submit():  # Check if form is submitted and data is valid
-        email = login_form.email.data
-        password = login_form.password.data
-        remember = login_form.remember.data
-
-        # Prepare data for login API request
-        login_user_post_data = {
+    # Put this and store it in the post data variable
+        received_login_info_post_data = {
             "email": email,
-            "password": password
+            "password":password
+            
         }
 
-        LOGIN_USER_URL = USER_API_BASE_URL + "user"
+        print(received_login_info_post_data)
+
+        LOGIN_RECEIVED_LOGIN_INFO_URL = USER_API_BASE_URL + "login"
 
         headers = {
-            'Content-type': 'application/json', 
-            'Accept': 'application/json'
+            'Content-type':'application/json', 
+            'Accept':'application/json'
         }
 
-        # Make request to login API endpoint
-        login_user_response = requests.post(
-            url=LOGIN_USER_URL,
+        login_received_login_info_response = requests.post(
+            url= LOGIN_RECEIVED_LOGIN_INFO_URL,
             headers=headers, 
-            json=login_user_post_data
+            json=received_login_info_post_data
         )
+        print(login_received_login_info_response)
+        print(login_received_login_info_response.status_code)
+        #print(login_received_login_info_response)
 
-        # Check if login API request was successful
-        if login_user_response.status_code == 200:
-            # Authenticate user
-            user = User.query.filter_by(email=email).first()
-            if user is not None:
-                login_user(user, remember=remember)
-                return jsonify({'success': True, 'message': 'User successfully logged in'})
+        try:
+            if login_received_login_info_response.status_code == 201:
+                # This response message must get passed to the front end registration form
+                return jsonify({'success': True, 'message': 'User successfully login'})
+            elif login_received_login_info_response.status_code == 200:
+                # This response message must get passed to the front end registration form
+                return jsonify({'success': False, 'message': 'Sorry, a user with this email address does not exist'})            
             else:
-                return jsonify({'success': False, 'message': 'Please check your login details and try again'}), 404
-        else:
-            return jsonify({'success': False, 'message': 'user not foundnvalid data submitted'}), 400
-          
+                # This response message must get passed to the front end registration form
+                return jsonify({'success': False, 'message': 'Whoops something went wrong while processing this request. Try again later'})
+        except:
+            return jsonify({'success': False, 'message': 'Whoops something went wrong while processing this request. Try again later'})
+        
     return render_template("login.html")
+        
+
+    # if request.method == 'GET':
+        # return render_template("login.html")
+    
+    # login_form = LoginForm(request.form)  # Initialize form with request data
+    # if login_form.validate_on_submit():  # Check if form is submitted and data is valid
+    #     email = login_form.email.data
+    #     password = login_form.password.data
+    #     remember = login_form.remember.data
+
+    #     # Prepare data for login API request
+    #     login_user_post_data = {
+    #         "email": email,
+    #         "password": password
+    #     }
+
+    #     LOGIN_USER_URL = USER_API_BASE_URL + "user"
+
+    #     headers = {
+    #         'Content-type': 'application/json', 
+    #         'Accept': 'application/json'
+    #     }
+
+    #     # Make request to login API endpoint
+    #     login_user_response = requests.post(
+    #         url=LOGIN_USER_URL,
+    #         headers=headers, 
+    #         json=login_user_post_data
+    #     )
+
+    #     # Check if login API request was successful
+    #     # If the api staus returns 201, success message of login being successful
+    #     # Else If the api status returns 200, success is false, message reads "Invalid username or password"
+    #     # Else success is false, "Something went wrong, try again later"
+
+    #     if login_user_response.status_code == 200:
+    #         # Authenticate user
+    #         user = User.query.filter_by(email=email).first()
+    #         if user is not None:
+    #             login_user(user, remember=remember)
+    #             return jsonify({'success': True, 'message': 'User successfully logged in'})
+    #         else:
+    #             return jsonify({'success': False, 'message': 'Please check your login details and try again'}), 404
+    #     else:
+    #         return jsonify({'success': False, 'message': 'user not foundnvalid data submitted'}), 400
+          
+    # return render_template("login.html")
 
 
 @app.route('/register', methods=['GET','POST'])
