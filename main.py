@@ -7,6 +7,7 @@ from flask_bootstrap import Bootstrap5
 
 import requests
 
+
 app = Flask(__name__)
 
 USER_API_BASE_URL = "http://localhost:5000/"
@@ -57,9 +58,52 @@ def skirt():
 def jumpsuit():
     return render_template("jumpsuit.html")
 
-@app.route('/login')
+
+@app.route("/login", methods=["GET", "POST"])
 def login():
+    if request.method == 'GET':
+        return render_template("login.html")
+    
+    login_form = LoginForm(request.form)  # Initialize form with request data
+    if login_form.validate_on_submit():  # Check if form is submitted and data is valid
+        email = login_form.email.data
+        password = login_form.password.data
+        remember = login_form.remember.data
+
+        # Prepare data for login API request
+        login_user_post_data = {
+            "email": email,
+            "password": password
+        }
+
+        LOGIN_USER_URL = USER_API_BASE_URL + "user"
+
+        headers = {
+            'Content-type': 'application/json', 
+            'Accept': 'application/json'
+        }
+
+        # Make request to login API endpoint
+        login_user_response = requests.post(
+            url=LOGIN_USER_URL,
+            headers=headers, 
+            json=login_user_post_data
+        )
+
+        # Check if login API request was successful
+        if login_user_response.status_code == 200:
+            # Authenticate user
+            user = User.query.filter_by(email=email).first()
+            if user is not None:
+                login_user(user, remember=remember)
+                return jsonify({'success': True, 'message': 'User successfully logged in'})
+            else:
+                return jsonify({'success': False, 'message': 'Please check your login details and try again'}), 404
+        else:
+            return jsonify({'success': False, 'message': 'user not foundnvalid data submitted'}), 400
+          
     return render_template("login.html")
+
 
 @app.route('/register', methods=['GET','POST'])
 def register():
@@ -103,9 +147,12 @@ def register():
         #print(register_new_user_response)
 
         try:
-            if register_new_user_response.status_code == 200:
+            if register_new_user_response.status_code == 201:
                 # This response message must get passed to the front end registration form
                 return jsonify({'success': True, 'message': 'User successfully registered'})
+            elif register_new_user_response.status_code == 200:
+                # This response message must get passed to the front end registration form
+                return jsonify({'success': False, 'message': 'Sorry, a user with this email address already exists'})            
             else:
                 # This response message must get passed to the front end registration form
                 return jsonify({'success': False, 'message': 'Whoops something went wrong while registering this user. Try again later'})
