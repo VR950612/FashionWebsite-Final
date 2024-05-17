@@ -77,6 +77,8 @@
               .text(response.message)
               .removeClass("text-danger")
               .addClass("text-success");
+              /*Redirect to index page*/
+              window.location.href="/";
           } else {
             $("#login-message")
               .text(response.message)

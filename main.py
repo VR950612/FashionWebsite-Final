@@ -5,14 +5,17 @@ from wtforms.validators import DataRequired, InputRequired, Length
 from flask_login import UserMixin, LoginManager, login_user, logout_user, current_user
 from flask_bootstrap import Bootstrap5
 
-import requests
+import requests, json
 
 
 app = Flask(__name__)
 
 USER_API_BASE_URL = "http://localhost:5000/"
 PRODUCT_CATEGORY_API_BASE_URL = "http://localhost:5001/"
-
+#app.config["SESSION_PERMANENT"] = False
+#app.config["SESSION_TYPE"] = "filesystem"
+#Session(app)
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 class SignupForm(FlaskForm):
     first_name = StringField('First Name', validators=[InputRequired(), Length(min=2, max=50)])
@@ -35,7 +38,7 @@ bootstrap = Bootstrap5(app)
 
 
 @app.route('/')
-def get_all_posts():
+def index():
     return render_template("index.html")
 
 @app.route('/product')
@@ -93,8 +96,23 @@ def login():
 
         try:
             if login_received_login_info_response.status_code == 201:
-                # This response message must get passed to the front end registration form
-                return jsonify({'success': True, 'message': 'User successfully login'})
+                logged_in_user_response_data = json.loads(login_received_login_info_response.text)
+                # Get the information of the logged in user here
+                print(logged_in_user_response_data)
+                print(type(logged_in_user_response_data))
+
+                print("CHECK 1")
+
+                #Store the information of the logged in user as session variable
+                session["logged_in_user"] = logged_in_user_response_data
+
+                print("CHECK2")
+                # Start the user session to login
+                session["name"] = logged_in_user_response_data["id"]
+                print("CHECK3")
+                print(session)
+                print("CHECK4")
+                return jsonify({'success': True, 'message': 'User successfully logged in'})
             elif login_received_login_info_response.status_code == 200:
                 # This response message must get passed to the front end registration form
                 return jsonify({'success': False, 'message': 'Sorry, a user with this email address does not exist'})            
@@ -102,58 +120,16 @@ def login():
                 # This response message must get passed to the front end registration form
                 return jsonify({'success': False, 'message': 'Whoops something went wrong while processing this request. Try again later'})
         except:
+            print("DID it throw an exception??")
             return jsonify({'success': False, 'message': 'Whoops something went wrong while processing this request. Try again later'})
+    if request.method == "GET":
+        # If the user is already logged in i.e. a session is active, then redirect to the index page
+        if session.get("name") is not None:
+            return redirect(url_for('index'))
+        # but if user is not logged in i.e. no active session, then go to login page
+        else:
+            return render_template("login.html")
         
-    return render_template("login.html")
-        
-
-    # if request.method == 'GET':
-        # return render_template("login.html")
-    
-    # login_form = LoginForm(request.form)  # Initialize form with request data
-    # if login_form.validate_on_submit():  # Check if form is submitted and data is valid
-    #     email = login_form.email.data
-    #     password = login_form.password.data
-    #     remember = login_form.remember.data
-
-    #     # Prepare data for login API request
-    #     login_user_post_data = {
-    #         "email": email,
-    #         "password": password
-    #     }
-
-    #     LOGIN_USER_URL = USER_API_BASE_URL + "user"
-
-    #     headers = {
-    #         'Content-type': 'application/json', 
-    #         'Accept': 'application/json'
-    #     }
-
-    #     # Make request to login API endpoint
-    #     login_user_response = requests.post(
-    #         url=LOGIN_USER_URL,
-    #         headers=headers, 
-    #         json=login_user_post_data
-    #     )
-
-    #     # Check if login API request was successful
-    #     # If the api staus returns 201, success message of login being successful
-    #     # Else If the api status returns 200, success is false, message reads "Invalid username or password"
-    #     # Else success is false, "Something went wrong, try again later"
-
-    #     if login_user_response.status_code == 200:
-    #         # Authenticate user
-    #         user = User.query.filter_by(email=email).first()
-    #         if user is not None:
-    #             login_user(user, remember=remember)
-    #             return jsonify({'success': True, 'message': 'User successfully logged in'})
-    #         else:
-    #             return jsonify({'success': False, 'message': 'Please check your login details and try again'}), 404
-    #     else:
-    #         return jsonify({'success': False, 'message': 'user not foundnvalid data submitted'}), 400
-          
-    # return render_template("login.html")
-
 
 @app.route('/register', methods=['GET','POST'])
 def register():
@@ -211,6 +187,14 @@ def register():
         
     return render_template("register.html")
 
+@app.route('/logout')
+def logout():
+    #Destroy the session variable
+    session.pop("name")
+    session.pop("logged_in_user")
+    return redirect(url_for('index'))
+    return render_template("/")
+
 @app.route('/sale_dresses')
 def sale_dresses():
     return render_template("sale_dresses.html")
@@ -242,33 +226,6 @@ def aboutus():
 @app.route('/checkout')
 def checkout():
     return render_template("checkout.html")
-
-# @app.route('/register', methods=['GET', 'POST'])
-# def register():
-#     form = SignupForm()
-#     if request.method == 'POST' and form.validate_on_submit():
-#         # Process signup data here, for example, you can access form data like:
-#         first_name = form.first_name.data
-#         last_name = form.last_name.data
-#         password = form.password.data
-#         age = form.age.data
-#         gender = form.gender.data
-#         # Perform signup logic (e.g., store user data in database)
-#         return "Signup successful!"
-#     return render_template('register.html', form=form)
-
-
-# @app.route("/login", methods=["GET", "POST"])
-# def login():
-#     login_form = LoginForm()
-#     if login_form.validate_on_submit():
-#         if login_form.email.data == "admin@email.com" and login_form.password.data == "12345678":
-#             return render_template("success.html")
-#         else:
-#             return render_template("denied.html")
-#     return render_template("login.html", form=login_form)
-
-
 
 if __name__ == "__main__":
     app.run(port=5002, debug=True)
