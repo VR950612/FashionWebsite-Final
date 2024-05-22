@@ -2,8 +2,7 @@ from flask import Flask, render_template, request, session, redirect, url_for, j
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, IntegerField, SelectField, SubmitField
 from wtforms.validators import DataRequired, InputRequired, Length
-from flask_login import UserMixin, LoginManager, login_user, logout_user, current_user
-from flask_bootstrap import Bootstrap5
+
 
 import requests, json
 
@@ -31,9 +30,8 @@ class LoginForm(FlaskForm):
     submit = SubmitField(label="Log In")
 
 
-app = Flask(__name__)
-app.secret_key = "any-string-you-want-just-keep-it-secret"
-bootstrap = Bootstrap5(app)
+
+
 
 
 
