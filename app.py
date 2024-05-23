@@ -30,22 +30,48 @@ class LoginForm(FlaskForm):
     submit = SubmitField(label="Log In")
 
 
-
-
-
-
-
 @app.route('/')
 def index():
     return render_template("index.html")
 
 @app.route('/product')
 def product():
+    # Call API to return 6 products at random
     return render_template("product.html")
 
 @app.route('/dress')
 def dress():
-    return render_template("dress.html")
+    DRESS_CATEGORY_URL = PRODUCT_CATEGORY_API_BASE_URL + "product-by-category/2"
+    headers = {
+        'Content-type':'application/json', 
+        'Accept':'application/json'
+    }
+
+    dress_category_products_response = requests.get(
+        url= DRESS_CATEGORY_URL,
+        headers=headers
+    )
+    print(dress_category_products_response)
+    print(dress_category_products_response.status_code)
+
+    try:
+        if dress_category_products_response.status_code == 200:
+            # This response message must get passed to the front end registration form
+            dress_category_products_response_data = json.loads(dress_category_products_response.text)
+            # Get the information of the logged in user here
+            print(dress_category_products_response_data)
+            print(type(dress_category_products_response_data))
+
+            print("CHECK 1")
+
+            print("CHECK2")      
+            return render_template("dress.html", dress_category_products=dress_category_products_response_data)
+        else:
+            return render_template("dress.html")
+    except:
+        print("Whoops something went wrong here!")
+        return render_template("dress.html")
+
 
 @app.route('/top')
 def top():

@@ -24,10 +24,9 @@
   <div class="container-fluid">
     <a class="navbar-brand" href="/" style="color: rgba(250, 38, 102, 0.901);">Fashion Fiesta</a>
     <div class="d-flex">
-      <p class="p-2 mt-2"><a class="text-reset" href="/wishlist"><i class="fa-solid fa-heart fa-2xl"></i></a></p>
-
       {% if session.name %}
-         <div class="p-2 mt-2 dropdown"><a class="dropdown-item" href="/logout">Logout</a></div>
+         <div class="p-2 mt-2 dropdown"><a class="dropdown-item" href="/logout">Welcome {{ session.logged_in_user.first_name }}!</a></div>
+         <div class="p-2 mt-2 dropdown"><a class="dropdown-item" href="/logout"></i> Logout</a></div>
       {% else %}
         <div class="p-2 mt-2 dropdown"> <a class="text-reset" href="/login"><i class= "fa-solid fa-user fa-2xl"></i></a></div>
       {% endif %}
@@ -38,6 +37,7 @@
            <li><a class="dropdown-item" href="\">Logout</a></li>
         </ul>
     </div>-->
+      <p class="p-2 mt-2"><a class="text-reset" href="/wishlist"><i class="fa-solid fa-heart fa-2xl"></i></a></p>
       <p class="p-2 mt-2"><a class="text-reset"  href="/checkout"><i class="fa-solid fa-bag-shopping fa-2xl"></i></a></p>
   </div>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,5 +81,5 @@
 </nav>
 
 {% if session.name %}
-  <div class="p-2 mt-2 dropdown"><a class="dropdown-item" href="/logout">Welcome {{ session.logged_in_user.first_name }}!</a></div>
+  
 {% endif %}
