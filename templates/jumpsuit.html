@@ -7,110 +7,20 @@
   <div class="album py-5 bg-body-tertiary">
     <div class="container">
       <div class="row row-cols-1 row-cols-l- row-cols-md-3 g-3 mb-5">
-        <div class="col">
-          <div class="card shadow">
-            <img
-              src="./static/img/Jumpsuit2.jpg"
-              class="d-block w-100"
-              alt="jumpsuit"
-            />
-            <div class="card-body">
-              <p class="card-text">Stylish Jumpsuit<br />NZD129<br /><br /></p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-secondary"
-                  >
-                    View
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {% if jumpsuit_category_products %} {% for product in
+        jumpsuit_category_products %}
         <div class="col">
           <div class="card shadow-m">
             <img
-              src="./static/img/Jumpsuit8.png"
-              class="d-block w-100"
-              alt="jumpsuit"
-            />
-            <div class="card-body">
-              <p class="card-text">Floral Jumpsuit<br />NZD109<br /><br /></p>
-
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-secondary"
-                  >
-                    View
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card shadow-m">
-            <img
-              src="./static/img/Jumpsuit6.jpg"
-              class="d-block w-100"
-              alt="jumpsuit"
-            />
-            <div class="card-body">
-              Dressy Jumpsuit<br />NZD159<br /><br /><br />
-
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-secondary"
-                  >
-                    View
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col">
-          <div class="card shadow-sm">
-            <img
-              src="./static/img/Jumpsuit12.png"
-              class="d-block w-100"
-              alt="jumpsuit"
-            />
-            <div class="card-body">
-              <p class="card-text">V Neck Batwing Jumpsuit<br />NZD129<br /></p>
-
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-secondary"
-                  >
-                    View
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card shadow-sm">
-            <img
-              src="./static/img/Printed Jumpsuit10.png"
+              src="{{product.product_image}}"
               class="d-block w-100"
               alt="jumpsuit"
             />
             <div class="card-body">
               <p class="card-text">
-                Printed Wide Leg Jumpsuit<br />NZD109<br />
+                {{product.product_display_title}}<br />NZD{{
+                product.product_price}}
               </p>
-
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
                   <button
@@ -124,28 +34,8 @@
             </div>
           </div>
         </div>
-        <div class="col">
-          <div class="card shadow-sm">
-            <img
-              src="./static/img/Jumpsuit14.png"
-              class="d-block w-100"
-              alt="jumpsuit"
-            />
-            <div class="card-body">
-              <p class="card-text">SQUARE NECK JUMPSUIT<br />NZD99</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-secondary"
-                  >
-                    View
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {% endfor %} {% else %} "Sorry, there are no products to display at this
+        time" {% endif %}
       </div>
     </div>
   </div>

@@ -16,34 +16,20 @@
   <div class="album py-5 bg-body-tertiary">
     <div class="container">
       <div class="row row-cols-1 row-cols-l- row-cols-md-3 g-3 mb-5">
-        <div class="col">
-          <div class="card shadow">
-            <img src="./static/img/Top1.jpg" class="d-block w-100" alt="top" />
-            <div class="card-body">
-              <p class="card-text">Opulent Floral Blouse<br />NZD79<br /></p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-secondary"
-                  >
-                    View
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {% if top_category_products %} {% for product in top_category_products
+        %}
         <div class="col">
           <div class="card shadow-m">
             <img
-              src="./static/img/NewTop1.jpg"
+              src="{{product.product_image}}"
               class="d-block w-100"
               alt="top"
             />
             <div class="card-body">
-              <p class="card-text">Flowing Foliage Blouse<br />NZD79<br /></p>
-
+              <p class="card-text">
+                {{product.product_display_title}}<br />NZD{{
+                product.product_price}}
+              </p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
                   <button
@@ -57,82 +43,8 @@
             </div>
           </div>
         </div>
-        <div class="col">
-          <div class="card shadow-m">
-            <img src="./static/img/Top4.jpg" class="d-block w-100" alt="top" />
-            <div class="card-body">
-              <p class="card-text">Ribbon Lace Blouse<br />NZD89<br /></p>
-
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-secondary"
-                  >
-                    View
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col">
-          <div class="card shadow-sm">
-            <img src="./static/img/Top5.jpg" class="d-block w-100" alt="top" />
-            <div class="card-body">
-              <p class="card-text">Elegant Floral Blouse<br />NZD79<br /></p>
-
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-secondary"
-                  >
-                    View
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card shadow-sm">
-            <img src="./static/img/Top7.jpg" class="d-block w-100" alt="top" />
-            <div class="card-body">
-              <p class="card-text">Agate Knit Blouse<br />NZD69<br /></p>
-
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-secondary"
-                  >
-                    View
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card shadow-sm">
-            <img src="./static/img/Top6.jpg" class="d-block w-100" alt="top" />
-            <div class="card-body">
-              <p class="card-text">Crinkle Roll Sleeve Blouse<br />NZD69</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-secondary"
-                  >
-                    View
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {% endfor %} {% else %} "Sorry, there are no products to display at this
+        time" {% endif %}
       </div>
     </div>
   </div>

@@ -37,6 +37,45 @@ def index():
 @app.route('/product')
 def product():
     # Call API to return 6 products at random
+    # Call that API twice
+    RANDOM_PRODUCTS_URL = PRODUCT_CATEGORY_API_BASE_URL + "random-product-set"
+    headers = {
+        'Content-type':'application/json', 
+        'Accept':'application/json'
+    }
+
+    random_products_response_one = requests.get(
+        url= RANDOM_PRODUCTS_URL,
+        headers=headers
+    )
+
+    random_products_response_two = requests.get(
+        url= RANDOM_PRODUCTS_URL,
+        headers=headers
+    )    
+    print(random_products_response_one)
+    print(random_products_response_one.status_code)
+    print(random_products_response_two.status_code)
+
+    try:
+        if random_products_response_one.status_code == 200 and random_products_response_two.status_code == 200:
+            # This response message must get passed to the front end template
+            random_products_response_one_response_data = json.loads(random_products_response_one.text)
+            print(random_products_response_one_response_data)
+            print(type(random_products_response_one_response_data))
+
+            # This response message must get passed to the front end template
+            random_products_response_two_response_data = json.loads(random_products_response_two.text)
+            print(random_products_response_two_response_data)
+            print(type(random_products_response_two_response_data))            
+
+    
+            return render_template("product.html", random_products_two=random_products_response_two_response_data)
+        else:
+            return render_template("product.html")
+    except:
+        print("Whoops something went wrong here!")
+
     return render_template("product.html")
 
 @app.route('/dress')
@@ -56,34 +95,108 @@ def dress():
 
     try:
         if dress_category_products_response.status_code == 200:
-            # This response message must get passed to the front end registration form
+            # This response message must get passed to the front end 
             dress_category_products_response_data = json.loads(dress_category_products_response.text)
-            # Get the information of the logged in user here
+
             print(dress_category_products_response_data)
             print(type(dress_category_products_response_data))
-
-            print("CHECK 1")
-
-            print("CHECK2")      
+     
             return render_template("dress.html", dress_category_products=dress_category_products_response_data)
         else:
             return render_template("dress.html")
     except:
         print("Whoops something went wrong here!")
-        return render_template("dress.html")
-
+     
 
 @app.route('/top')
 def top():
-    return render_template("top.html")
+    TOP_CATEGORY_URL = PRODUCT_CATEGORY_API_BASE_URL + "product-by-category/4"
+    headers = {
+        'Content-type':'application/json', 
+        'Accept':'application/json'
+    }
+
+    top_category_products_response = requests.get(
+        url= TOP_CATEGORY_URL,
+        headers=headers
+    )
+    print(top_category_products_response)
+    print(top_category_products_response.status_code)
+
+    try:
+        if top_category_products_response.status_code == 200:
+            # This response message must get passed to the front end 
+            top_category_products_response_data = json.loads(top_category_products_response.text)
+
+            print(top_category_products_response_data)
+            print(type(top_category_products_response_data))
+  
+            return render_template("top.html", top_category_products=top_category_products_response_data)
+        else:
+            return render_template("top.html")
+    except:
+        print("Whoops something went wrong here!")
+        
 
 @app.route('/skirt')
 def skirt():
-    return render_template("skirt.html")
+    SKIRT_CATEGORY_URL = PRODUCT_CATEGORY_API_BASE_URL + "product-by-category/12"
+    headers = {
+        'Content-type':'application/json', 
+        'Accept':'application/json'
+    }
+
+    skirt_category_products_response = requests.get(
+        url= SKIRT_CATEGORY_URL,
+        headers=headers
+    )
+    print(skirt_category_products_response)
+    print(skirt_category_products_response.status_code)
+
+    try:
+        if skirt_category_products_response.status_code == 200:
+            # This response message must get passed to the front end 
+            skirt_category_products_response_data = json.loads(skirt_category_products_response.text)
+
+            print(skirt_category_products_response_data)
+            print(type(skirt_category_products_response_data))
+     
+            return render_template("skirt.html", skirt_category_products=skirt_category_products_response_data)
+        else:
+            return render_template("skirt.html")
+    except:
+        print("Whoops something went wrong here!")
+
 
 @app.route('/jumpsuit')
 def jumpsuit():
-    return render_template("jumpsuit.html")
+    JUMPSUIT_CATEGORY_URL = PRODUCT_CATEGORY_API_BASE_URL + "product-by-category/3"
+    headers = {
+        'Content-type':'application/json', 
+        'Accept':'application/json'
+    }
+
+    jumpsuit_category_products_response = requests.get(
+        url= JUMPSUIT_CATEGORY_URL,
+        headers=headers
+    )
+    print(jumpsuit_category_products_response)
+    print(jumpsuit_category_products_response.status_code)
+
+    try:
+        if jumpsuit_category_products_response.status_code == 200:
+            # This response message must get passed to the front end 
+            jumpsuit_category_products_response_data = json.loads(jumpsuit_category_products_response.text)
+
+            print(jumpsuit_category_products_response_data)
+            print(type(jumpsuit_category_products_response_data))
+    
+            return render_template("jumpsuit.html", jumpsuit_category_products=jumpsuit_category_products_response_data)
+        else:
+            return render_template("jumpsuit.html")
+    except:
+        print("Whoops something went wrong here!")
+
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -219,21 +332,21 @@ def logout():
     return redirect(url_for('index'))
     return render_template("/")
 
-@app.route('/sale_dresses')
-def sale_dresses():
-    return render_template("sale_dresses.html")
+# @app.route('/sale_dresses')
+# def sale_dresses():
+#     return render_template("sale_dresses.html")
 
-@app.route('/sale_tops')
-def sale_tops():
-    return render_template("sale_tops.html")
+# @app.route('/sale_tops')
+# def sale_tops():
+#     return render_template("sale_tops.html")
 
-@app.route('/sale_skirts')
-def sale_skirts():
-    return render_template("sale_skirts.html")
+# @app.route('/sale_skirts')
+# def sale_skirts():
+#     return render_template("sale_skirts.html")
 
-@app.route('/sale_jumpsuits')
-def sale_jumpsuits():
-    return render_template("sale_jumpsuits.html")
+# @app.route('/sale_jumpsuits')
+# def sale_jumpsuits():
+#     return render_template("sale_jumpsuits.html")
 
 @app.route('/wishlist')
 def wishlist():
