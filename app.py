@@ -70,7 +70,7 @@ def product():
             print(type(random_products_response_two_response_data))            
 
     
-            return render_template("product.html", random_products_two=random_products_response_two_response_data)
+            return render_template("product.html", random_products_one=random_products_response_one_response_data,random_products_two=random_products_response_two_response_data)
         else:
             return render_template("product.html")
     except:
@@ -190,7 +190,10 @@ def jumpsuit():
 
             print(jumpsuit_category_products_response_data)
             print(type(jumpsuit_category_products_response_data))
-    
+
+            print("CHECK 1")
+
+            print("CHECK2")      
             return render_template("jumpsuit.html", jumpsuit_category_products=jumpsuit_category_products_response_data)
         else:
             return render_template("jumpsuit.html")
@@ -331,6 +334,36 @@ def logout():
     session.pop("logged_in_user")
     return redirect(url_for('index'))
     return render_template("/")
+
+@app.route('/product/<int:product_id>')
+def single_product(product_id):
+    PRODUCT_DETAILS_URL = PRODUCT_CATEGORY_API_BASE_URL + "product/" + str(product_id)
+    headers = {
+        'Content-type':'application/json', 
+        'Accept':'application/json'
+    }
+
+    product_details_response = requests.get(
+        url= PRODUCT_DETAILS_URL,
+        headers=headers
+    )
+    print(product_details_response)
+    print(product_details_response.status_code)
+
+    try:
+        if product_details_response.status_code == 200:
+            # This response message must get passed to the front end 
+            product_details_response_data = json.loads(product_details_response.text)
+
+            print(product_details_response_data)
+            print(type(product_details_response_data))
+     
+            return render_template("product_details.html", product=product_details_response_data)
+        else:
+            return render_template("product_details.html", product={})
+    except:
+        print("Whoops something went wrong here!")    
+    return render_template("product_details.html")
 
 # @app.route('/sale_dresses')
 # def sale_dresses():
