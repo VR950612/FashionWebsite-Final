@@ -1,23 +1,21 @@
 {% include "header.html" %}
 <div class="container mt-5">
-  <div class="row">
+  <div class="row mx-auto" style="max-width: 80%;"> <!-- Adjust max-width as needed -->
     <!-- First Card -->
-    <div class="col-md-6 pb-5">
+    <div class="col-md-5">
       <img
         src="/{{product.product_image}}"
-        class="d-block w-60 h-60"
+        class="d-block w-100 h-auto pb-5 mb-5 ms-5"
         alt="dress"
       />
     </div>
     <!-- Second Card -->
-    <div class="col-md-6">
+    <div class="col-md-5 offset-md-1 pt-5">
       <h4>{{product.product_display_title}}</h4>
       <hr>
-      <p>Price NZD{{product.product_price}}</p>
-      <p>Product Description </br> {{product.product_description}}</p>
-          <a href="#" class="btn btn-warning">Add to Cart</a>
-        </div>
-      </div>
+      <p><strong>Price</strong> NZD{{product.product_price}}</p>
+      <p><strong>Product Description</strong></br> {{product.product_description}}</p>
+      <a href="#" class="btn btn-success">ADD TO BAG</a>
     </div>
   </div>
 </div>

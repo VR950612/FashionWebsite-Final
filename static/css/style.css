@@ -146,3 +146,7 @@ header.masthead {
 
 }
 
+.test:focus {
+    box-shadow: none; /* Remove any box shadow */
+    border: none; /* Optional: Remove the border */
+   }
