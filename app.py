@@ -30,6 +30,23 @@ else:
 #Session(app)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
+#Database Configuration
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
+if 'RDS_DB_NAME' in os.environ:
+    app.config['SQLALCHEMY_DATABASE_URI'] = \
+        'postgresql://{username}:{password}@{host}:{port}/{database}'.format(
+        username=os.environ['RDS_USERNAME'],
+        password=os.environ['RDS_PASSWORD'],
+        host=os.environ['RDS_HOSTNAME'],
+        port=os.environ['RDS_PORT'],
+        database=os.environ['RDS_DB_NAME'],
+    )
+else:
+    # our database uri
+    # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Adminadmin123@localhost/fashionfrontenddb'
+
+
 class SignupForm(FlaskForm):
     first_name = StringField('First Name', validators=[InputRequired(), Length(min=2, max=50)])
     last_name = StringField('Last Name', validators=[InputRequired(), Length(min=2, max=50)])
