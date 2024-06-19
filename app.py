@@ -4,13 +4,27 @@ from wtforms import StringField, PasswordField, IntegerField, SelectField, Submi
 from wtforms.validators import DataRequired, InputRequired, Length
 
 
-import requests, json
+import requests, json, os
 
 
 app = Flask(__name__)
 
-USER_API_BASE_URL = "http://localhost:5000/"
-PRODUCT_CATEGORY_API_BASE_URL = "http://localhost:5001/"
+if 'USER_API_BASE_URL' in os.environ:
+    USER_API_BASE_URL=os.environ['USER_API_BASE_URL']
+else:
+    USER_API_BASE_URL = "http://localhost:5004/"
+
+if 'PRODUCT_CATEGORY_API_BASE_URL' in os.environ:
+    PRODUCT_CATEGORY_API_BASE_URL=os.environ['PRODUCT_CATEGORY_API_BASE_URL']
+else:
+    PRODUCT_CATEGORY_API_BASE_URL = "http://localhost:5001/"    
+
+# USER_API_BASE_URL = "http://localhost:5004/"
+# USER_API_BASE_URL="http://usersapi-prod.ap-southeast-2.elasticbeanstalk.com/"
+
+#PRODUCT_CATEGORY_API_BASE_URL = "http://localhost:5001/"
+
+# PRODUCT_CATEGORY_API_BASE_URL = "http://api-products-prod.ap-southeast-2.elasticbeanstalk.com/"
 #app.config["SESSION_PERMANENT"] = False
 #app.config["SESSION_TYPE"] = "filesystem"
 #Session(app)
