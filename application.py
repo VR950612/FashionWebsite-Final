@@ -5,6 +5,7 @@ from wtforms.validators import DataRequired, InputRequired, Length
 
 
 import requests, json, os
+import stripe
 
 
 application = Flask(__name__)
@@ -29,6 +30,13 @@ else:
 #app.config["SESSION_TYPE"] = "filesystem"
 #Session(app)
 application.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+
+stripe_keys = {
+    'secret_key': 'sk_test_51PQfmVCS1IJCxgBiWesnCRghxKtP5aizpwMjmBcJ4KGl9lhib7qrwiJ4t4JAhj61C3FgsBrg9BDfclfH6gsauBrv00Zbga0AzH',
+    'publishable_key': 'pk_test_51PQfmVCS1IJCxgBiNh7RYzU64zQWQJgZrzv49LhXD66VxDm6JFa1Usjnh7rBHJ1L41cYCASwQ4p9HtQpNdxvGsel00nAoQrvQo'
+}
+
+stripe.api_key = stripe_keys['secret_key']
 
 #Database Configuration
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
@@ -388,8 +396,13 @@ def single_product(product_id):
 
             print(product_details_response_data)
             print(type(product_details_response_data))
+
+            product_price = product_details_response_data['product_price']
+            data_amount = float(product_price) * 100
+            print(data_amount)
+            print(type(data_amount))
      
-            return render_template("product_details.html", product=product_details_response_data)
+            return render_template("product_details.html", data_amount = data_amount, product=product_details_response_data, key=stripe_keys['publishable_key'])
         else:
             return render_template("product_details.html", product={})
     except:

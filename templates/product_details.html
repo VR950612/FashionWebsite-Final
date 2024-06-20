@@ -15,7 +15,17 @@
       <hr>
       <p><strong>Price</strong> NZD{{product.product_price}}</p>
       <p><strong>Product Description</strong></br> {{product.product_description}}</p>
-      <a href="#" class="btn btn-success">ADD TO BAG</a>
+      <!--<a href="#" class="btn btn-success">BUY NOW</a>-->
+      <form action="/checkout" method="post">
+        <script
+          src="https://checkout.stripe.com/checkout.js"
+          class="stripe-button"
+          data-key="{{ key }}"
+          data-description="{{ product.product_title }}"
+          data-amount="{{ data_amount }}"
+          data-locale="auto"
+        ></script>
+      </form>      
     </div>
   </div>
 </div>
