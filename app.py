@@ -429,4 +429,4 @@ def checkout():
     return render_template("checkout.html")
 
 if __name__ == "__main__":
-    app.run(port=5002, debug=True)
+    app.run(port=5000, debug=True)
