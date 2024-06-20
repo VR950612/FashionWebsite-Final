@@ -443,7 +443,31 @@ def checkout():
 
 @application.route('/stripe-checkout/<int:product_id>', methods=['POST', 'GET'])
 def stripe_checkout(product_id):
-  
+    PRODUCT_DETAILS_URL = PRODUCT_CATEGORY_API_BASE_URL + "product/" + str(product_id)
+    headers = {
+        'Content-type':'application/json', 
+        'Accept':'application/json'
+    }
+
+    product_details_response = requests.get(
+        url= PRODUCT_DETAILS_URL,
+        headers=headers
+    )
+    try:
+        if product_details_response.status_code == 200:
+            # This response message must get passed to the front end 
+            product_details_response_data = json.loads(product_details_response.text)
+
+            print(product_details_response_data)
+            print(type(product_details_response_data))
+     
+            return render_template("stripe_checkout.html", product=product_details_response_data)
+        else:
+            flash('Payment Successful! Thank you for shopping with us😊')
+            return render_template("stripe_checkout.html", product={})
+    except:
+        print("Whoops something went wrong here!")
+          
     return render_template("stripe_checkout.html")
 
 if __name__ == "__main__":

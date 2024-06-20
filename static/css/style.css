@@ -117,36 +117,55 @@ header.masthead {
   }
 
   .custom-form {
-    max-width: 400px; /* Adjust the maximum width of the form */
-    margin: 0 auto; /* Center the form horizontally */
-    padding: 20px; /* Add padding to the form */
+    max-width: 400px; 
+    margin: 0 auto; 
+    padding: 20px; 
     background-color: rgba(255, 255, 255, 0.8); /* Set background color with some transparency */
-    border-radius: 10px; /* Add border radius for rounded corners */
+    border-radius: 10px; 
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow for depth */
   }
 
   .btn-pink {
     background-color: #ec60a6;
-    color: white; /* Ensures the text is readable against the pink background */
-    /* You can also customize other button properties such as border color, etc. */
-}
-
-  .login-background {
-    background-image: url('/static/img/sale.jpg'); /* Replace with your image path */
-    background-size: cover;
-    background-position: center;
-    padding: 50px 0; /* Adjust padding as needed */
+    color: white; 
+    
 }
 
 .login-background{
-    background-image: url('\static\img\sale.jpg');
     background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-
+    background-size: cover;
+    background-position: center;
+    padding: 50px 0; 
 }
 
 .test:focus {
     box-shadow: none; /* Remove any box shadow */
     border: none; /* Optional: Remove the border */
    }
+
+   .checkout-background {
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    background-size: cover; 
+    background-position: center; 
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; 
+    position: relative;
+}
+
+.wrapper {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.alert {
+    text-align: center;
+    font-weight: bold; 
+    font-size: x-large;
+    font-family: "Pacifico", cursive;
+    color: crimson;
+}
+
