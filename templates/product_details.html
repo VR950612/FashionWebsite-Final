@@ -16,7 +16,7 @@
       <p><strong>Price</strong> NZD{{product.product_price}}</p>
       <p><strong>Product Description</strong></br> {{product.product_description}}</p>
       <!--<a href="#" class="btn btn-success">BUY NOW</a>-->
-      <form action="/checkout" method="post">
+      <form action="/stripe-checkout/{{product.id}}" method="post">
         <script
           src="https://checkout.stripe.com/checkout.js"
           class="stripe-button"

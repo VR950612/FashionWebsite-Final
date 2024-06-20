@@ -441,5 +441,10 @@ def aboutus():
 def checkout():
     return render_template("checkout.html")
 
+@application.route('/stripe-checkout/<int:product_id>', methods=['POST', 'GET'])
+def stripe_checkout(product_id):
+  
+    return render_template("stripe_checkout.html")
+
 if __name__ == "__main__":
     application.run(port=5000, debug=True)
