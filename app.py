@@ -8,7 +8,7 @@ import requests, json, os
 import stripe
 
 
-application = Flask(__name__)
+app = Flask(__name__)
 
 if 'USER_API_BASE_URL' in os.environ:
     USER_API_BASE_URL=os.environ['USER_API_BASE_URL']
@@ -29,7 +29,7 @@ else:
 #app.config["SESSION_PERMANENT"] = False
 #app.config["SESSION_TYPE"] = "filesystem"
 #Session(app)
-application.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 stripe_keys = {
     'secret_key': 'sk_test_51PQfmVCS1IJCxgBiWesnCRghxKtP5aizpwMjmBcJ4KGl9lhib7qrwiJ4t4JAhj61C3FgsBrg9BDfclfH6gsauBrv00Zbga0AzH',
@@ -41,7 +41,7 @@ stripe.api_key = stripe_keys['secret_key']
 #Database Configuration
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
 if 'RDS_DB_NAME' in os.environ:
-    application.config['SQLALCHEMY_DATABASE_URI'] = \
+    app.config['SQLALCHEMY_DATABASE_URI'] = \
         'postgresql://{username}:{password}@{host}:{port}/{database}'.format(
         username=os.environ['RDS_USERNAME'],
         password=os.environ['RDS_PASSWORD'],
@@ -52,7 +52,7 @@ if 'RDS_DB_NAME' in os.environ:
 else:
     # our database uri
     # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
-    application.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Adminadmin123@localhost/fashionfrontenddb'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Adminadmin123@localhost/fashionfrontenddb'
 
 
 class SignupForm(FlaskForm):
@@ -69,11 +69,11 @@ class LoginForm(FlaskForm):
     submit = SubmitField(label="Log In")
 
 
-@application.route('/')
+@app.route('/')
 def index():
     return render_template("index.html")
 
-@application.route('/product')
+@app.route('/product')
 def product():
     # Call API to return 6 products at random
     # Call that API twice
@@ -117,7 +117,7 @@ def product():
 
     return render_template("product.html")
 
-@application.route('/dress')
+@app.route('/dress')
 def dress():
     DRESS_CATEGORY_URL = PRODUCT_CATEGORY_API_BASE_URL + "product-by-category/2"
     headers = {
@@ -147,7 +147,7 @@ def dress():
         print("Whoops something went wrong here!")
      
 
-@application.route('/top')
+@app.route('/top')
 def top():
     TOP_CATEGORY_URL = PRODUCT_CATEGORY_API_BASE_URL + "product-by-category/4"
     headers = {
@@ -177,7 +177,7 @@ def top():
         print("Whoops something went wrong here!")
         
 
-@application.route('/skirt')
+@app.route('/skirt')
 def skirt():
     SKIRT_CATEGORY_URL = PRODUCT_CATEGORY_API_BASE_URL + "product-by-category/12"
     headers = {
@@ -207,7 +207,7 @@ def skirt():
         print("Whoops something went wrong here!")
 
 
-@application.route('/jumpsuit')
+@app.route('/jumpsuit')
 def jumpsuit():
     JUMPSUIT_CATEGORY_URL = PRODUCT_CATEGORY_API_BASE_URL + "product-by-category/3"
     headers = {
@@ -241,7 +241,7 @@ def jumpsuit():
 
 
 
-@application.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == 'POST':
         #first grab all data from the form's variable i.e. the name property
@@ -310,7 +310,7 @@ def login():
             return render_template("login.html")
         
 
-@application.route('/register', methods=['GET','POST'])
+@app.route('/register', methods=['GET','POST'])
 def register():
     if request.method == 'POST':
         #first grab all data from the form's variable i.e. the name property
@@ -366,7 +366,7 @@ def register():
         
     return render_template("register.html")
 
-@application.route('/logout')
+@app.route('/logout')
 def logout():
     #Destroy the session variable
     session.pop("name")
@@ -374,7 +374,7 @@ def logout():
     return redirect(url_for('index'))
     return render_template("/")
 
-@application.route('/product/<int:product_id>')
+@app.route('/product/<int:product_id>')
 def single_product(product_id):
     PRODUCT_DETAILS_URL = PRODUCT_CATEGORY_API_BASE_URL + "product/" + str(product_id)
     headers = {
@@ -425,23 +425,23 @@ def single_product(product_id):
 # def sale_jumpsuits():
 #     return render_template("sale_jumpsuits.html")
 
-@application.route('/wishlist')
+@app.route('/wishlist')
 def wishlist():
     return render_template("wishlist.html")
 
-@application.route('/contact')
+@app.route('/contact')
 def contact():
     return render_template("contact.html")
 
-@application.route('/aboutus')
+@app.route('/aboutus')
 def aboutus():
     return render_template("aboutus.html")
 
-@application.route('/checkout')
+@app.route('/checkout')
 def checkout():
     return render_template("checkout.html")
 
-@application.route('/stripe-checkout/<int:product_id>', methods=['POST', 'GET'])
+@app.route('/stripe-checkout/<int:product_id>', methods=['POST', 'GET'])
 def stripe_checkout(product_id):
     PRODUCT_DETAILS_URL = PRODUCT_CATEGORY_API_BASE_URL + "product/" + str(product_id)
     headers = {
@@ -471,4 +471,4 @@ def stripe_checkout(product_id):
     return render_template("stripe_checkout.html")
 
 if __name__ == "__main__":
-    application.run(port=5000, debug=True)
+    app.run(port=5000, debug=True)
