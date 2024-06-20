@@ -7,7 +7,7 @@ from wtforms.validators import DataRequired, InputRequired, Length
 import requests, json, os
 
 
-app = Flask(__name__)
+application = Flask(__name__)
 
 if 'USER_API_BASE_URL' in os.environ:
     USER_API_BASE_URL=os.environ['USER_API_BASE_URL']
@@ -28,12 +28,12 @@ else:
 #app.config["SESSION_PERMANENT"] = False
 #app.config["SESSION_TYPE"] = "filesystem"
 #Session(app)
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+application.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 #Database Configuration
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
 if 'RDS_DB_NAME' in os.environ:
-    app.config['SQLALCHEMY_DATABASE_URI'] = \
+    application.config['SQLALCHEMY_DATABASE_URI'] = \
         'postgresql://{username}:{password}@{host}:{port}/{database}'.format(
         username=os.environ['RDS_USERNAME'],
         password=os.environ['RDS_PASSWORD'],
@@ -44,7 +44,7 @@ if 'RDS_DB_NAME' in os.environ:
 else:
     # our database uri
     # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Adminadmin123@localhost/fashionfrontenddb'
+    application.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Adminadmin123@localhost/fashionfrontenddb'
 
 
 class SignupForm(FlaskForm):
@@ -61,11 +61,11 @@ class LoginForm(FlaskForm):
     submit = SubmitField(label="Log In")
 
 
-@app.route('/')
+@application.route('/')
 def index():
     return render_template("index.html")
 
-@app.route('/product')
+@application.route('/product')
 def product():
     # Call API to return 6 products at random
     # Call that API twice
@@ -109,7 +109,7 @@ def product():
 
     return render_template("product.html")
 
-@app.route('/dress')
+@application.route('/dress')
 def dress():
     DRESS_CATEGORY_URL = PRODUCT_CATEGORY_API_BASE_URL + "product-by-category/2"
     headers = {
@@ -139,7 +139,7 @@ def dress():
         print("Whoops something went wrong here!")
      
 
-@app.route('/top')
+@application.route('/top')
 def top():
     TOP_CATEGORY_URL = PRODUCT_CATEGORY_API_BASE_URL + "product-by-category/4"
     headers = {
@@ -169,7 +169,7 @@ def top():
         print("Whoops something went wrong here!")
         
 
-@app.route('/skirt')
+@application.route('/skirt')
 def skirt():
     SKIRT_CATEGORY_URL = PRODUCT_CATEGORY_API_BASE_URL + "product-by-category/12"
     headers = {
@@ -199,7 +199,7 @@ def skirt():
         print("Whoops something went wrong here!")
 
 
-@app.route('/jumpsuit')
+@application.route('/jumpsuit')
 def jumpsuit():
     JUMPSUIT_CATEGORY_URL = PRODUCT_CATEGORY_API_BASE_URL + "product-by-category/3"
     headers = {
@@ -233,7 +233,7 @@ def jumpsuit():
 
 
 
-@app.route("/login", methods=["GET", "POST"])
+@application.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == 'POST':
         #first grab all data from the form's variable i.e. the name property
@@ -302,7 +302,7 @@ def login():
             return render_template("login.html")
         
 
-@app.route('/register', methods=['GET','POST'])
+@application.route('/register', methods=['GET','POST'])
 def register():
     if request.method == 'POST':
         #first grab all data from the form's variable i.e. the name property
@@ -358,7 +358,7 @@ def register():
         
     return render_template("register.html")
 
-@app.route('/logout')
+@application.route('/logout')
 def logout():
     #Destroy the session variable
     session.pop("name")
@@ -366,7 +366,7 @@ def logout():
     return redirect(url_for('index'))
     return render_template("/")
 
-@app.route('/product/<int:product_id>')
+@application.route('/product/<int:product_id>')
 def single_product(product_id):
     PRODUCT_DETAILS_URL = PRODUCT_CATEGORY_API_BASE_URL + "product/" + str(product_id)
     headers = {
@@ -412,21 +412,21 @@ def single_product(product_id):
 # def sale_jumpsuits():
 #     return render_template("sale_jumpsuits.html")
 
-@app.route('/wishlist')
+@application.route('/wishlist')
 def wishlist():
     return render_template("wishlist.html")
 
-@app.route('/contact')
+@application.route('/contact')
 def contact():
     return render_template("contact.html")
 
-@app.route('/aboutus')
+@application.route('/aboutus')
 def aboutus():
     return render_template("aboutus.html")
 
-@app.route('/checkout')
+@application.route('/checkout')
 def checkout():
     return render_template("checkout.html")
 
 if __name__ == "__main__":
-    app.run(port=5000, debug=True)
+    application.run(port=5000, debug=True)
