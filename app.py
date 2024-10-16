@@ -664,6 +664,36 @@ def merchant_addproduct():
 
 @app.route('/admin_all_categories')
 def merchant_showcategories():
+    ALL_PRODUCT_CATEGORIES_URL = PRODUCT_CATEGORY_API_BASE_URL + "all_product_categories"
+    headers = {
+        'Content-type':'application/json', 
+        'Accept':'application/json'
+    }
+
+    all_products_category_response = requests.get(
+        url= ALL_PRODUCT_CATEGORIES_URL,
+        headers=headers
+    )
+    print(all_products_category_response)
+    print(all_products_category_response.status_code)
+
+    try:
+        if all_products_category_response.status_code == 200:
+            # This response message must get passed to the front end 
+            all_product_categories_response_data = json.loads(all_products_category_response.text)
+
+            print(all_product_categories_response_data)
+            print(type(all_product_categories_response_data))
+
+            print("CHECK 1")
+
+            print("CHECK2")      
+            return render_template("merchant_showcategories.html", categories=all_product_categories_response_data)
+        else:
+            return render_template("merchant_showcategories.html")
+    except:
+        print("Whoops something went wrong here!")
+    '''
     try:
         categories = PRODUCT_CATEGORY_API_BASE_URL() 
         if categories is None or len(categories) == 0:
@@ -671,6 +701,7 @@ def merchant_showcategories():
         return render_template('merchant_showcategories.html', categories=categories)
     except Exception as e:
         return render_template('merchant_showcategories.html', categories=[], error=str(e))
+    '''
 
 
 @app.route('/categories', methods=['GET', 'POST'])

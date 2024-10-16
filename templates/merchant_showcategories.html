@@ -140,22 +140,25 @@
                             </tr>
                         </thead>
                         <tbody>
-                          {% for product_category in all_product_categories %}
-                          <tr>
-                          <td>{{ product__category.id }}</td>
-                          <td>{{ product_category.category_name }}</td>
-                          <td>{{ product_category.category_code }}</td>
-                          <td><a href="/edit/{{ product__category.id }}" class="btn btn-primary">Edit</a></td>
-                          <td>
-                              <button class="btn btn-danger" onclick="document.getElementById('delete_model_{{product__category.id}}').style.display='block'">Delete</button>
-                          </td>
-                              <a href="/merchant_viewproducts/{{product__category.id}}" class="btn btn-info">View Products</a>
-                          </td>
-                          {% include 'delete_model.html' %}
-                      </tr>
-                      {% endfor %}
-                  </tbody>
-              </table>
+                            {% if categories %}
+                              {% for product_category in categories %}
+                                <tr>
+                                  <td>{{ product_category.id }}</td>
+                                  <td>{{ product_category.category_name }}</td>
+                                  <td>{{ product_category.category_code }}</td>
+                                  <td><a href="#" class="btn btn-primary">Edit</a></td>
+                                  <td>
+                                      <button class="btn btn-danger" onclick="document.getElementById('delete_model_{{product_category.id}}').style.display='block'">Delete</button>
+                                  </td>
+                                  <td>
+                                      <a href="#" class="btn btn-info">View Products</a>
+                                      {% include 'delete_model.html' %}
+                                  </td>                                  
+                                </tr>
+                              {% endfor %}
+                            {% endif %}
+                        </tbody>
+                    </table>
                 <div>
                 <a href="javascript:history.back()" class="btn btn-info" style="background-color:black; color:white; margin-top: 40px;">Go to previous page</a>
               </div>
