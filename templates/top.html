@@ -1,18 +1,11 @@
 {% include "header.html" %}
 
-<style>
-  body {
-    background-image: url("/static/img/sale3.jpg");
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-  }
-</style>
-
 <div class="album py-5 bg-light">
   <p class="wordings">
     Fabulous selection of blouses. Great range of colours and dependable sizing.
     We will keep you looking your best through every season.
   </p>
+
   <div class="album py-5 bg-body-tertiary">
     <div class="container">
       <div class="row row-cols-1 row-cols-l- row-cols-md-3 g-3 mb-2">
@@ -23,6 +16,7 @@
             <img
               src="{{product.product_image}}"
               class="d-block w-100"
+              style="height: 400px"
               alt="top"
             />
             <div class="card-body">
@@ -49,5 +43,4 @@
     </div>
   </div>
 </div>
-
 {% include "footer.html" %}

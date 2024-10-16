@@ -1,11 +1,12 @@
 {% include "header.html" %}
 
 <section id="login-background" class="gradient-background">
-  <div class="container pb-5 pt-2" style="max-width: 500px">
-    <h2 class="text-center mt-3" style="color: white; margin-bottom: 20px">
-      Sign Up
-    </h2>
-
+  <div class="container pb-5 pt-4" style="max-width: 500px">
+    <div
+      class="text-center mt-4"
+      style="color: white; margin-bottom: 20px"
+    ></div>
+    <!-- Signup form -->
     <form class="custom-form" id="register-form">
       <div class="mb-3 mt-3">
         <label for="firstName" class="form-label"
@@ -82,9 +83,12 @@
         ><br />
       </div>
       <div class="text-center">
-        <button type="submit" class="btn btn-dark fs-6 col-md-6 mb-5">
+        <button type="submit" class="btn btn-dark fs-6 col-md-6 mb-3">
           Register
         </button>
+        <div class="text-center">
+          <a href="/login" class="btn btn-dark fs-6 col-md-6 mb-3"> Login </a>
+        </div>
       </div>
       <span id="signup-message" class="text-danger"></span>
     </form>

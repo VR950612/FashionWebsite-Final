@@ -1,0 +1,168 @@
+{% include "header.html" %}
+<link
+  href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"
+  rel="stylesheet"
+  id="bootstrap-css"
+/>
+
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a
+            class="dropdown-toggle"
+            role="button"
+            data-toggle="dropdown"
+            href="#"
+            ><i class="fa fa-user-circle"></i> Admin <span class="caret"></span
+          ></a>
+          <ul id="g-account-menu" class="dropdown-menu" role="menu">
+            <li>
+              <a href="#"><i class="fa fa-user-secret"></i> Logout</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-lg-1 col-md-1 col-m-2 col-xs-12">
+    <ul class="nav nav-pills nav-stacked" style="border-right: 2px solid black">
+      <!--<li class="nav-header"></li>-->
+      <li>
+        <a href="#" style="font-size: 14px"
+          ><i class="fa fa-dashboard"></i> Dashboard</a
+        >
+      </li>
+      <li>
+        <a href="#" style="font-size: 14px"
+          ><i class="fa-brands fa-product-hunt"></i> Products</a
+        >
+      </li>
+      <li>
+        <a href="#" style="font-size: 14px"
+          ><i class="fa-solid fa-bag-shopping"></i> Orders</a
+        >
+      </li>
+      <li>
+        <a href="#" style="font-size: 14px"
+          ><i class="fa-solid fa-person"></i> Customers</a
+        >
+      </li>
+    </ul>
+  </div>
+  <form class="form-horizontal">
+    <fieldset>
+      <!-- Form Name -->
+      <legend class= text-center >PRODUCT DASHBOARD</legend>
+
+      <div class="row">
+        <div class="col-lg-7 mx-auto">
+            <div class="card border-0 shadow">
+                <div class="card-body p-5">
+
+                    <!-- Responsive table -->
+                    <div class="table-responsive">
+                        <table class="table m-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">PROADUCT ID</th>
+                                    <th scope="col">PRODUCT CATEGORY</th>
+                                    <th scope="col">PRODUCT NAME</th>
+                                    <th scope="col">PRICE (NZD $)</th>
+                                    <th scope="col">IMAGE</th>
+                                    <th scope="col">QUANTITY IN STOCK</th>
+                                    <th scope="col">REMOVE</th>
+                                    <th scope="col">UPDATE</th>
+                                    </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <!-- Call to action buttons -->
+                                        <ul class="list-inline m-0">
+                                            <li class="list-inline-item">
+                                                <button class="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></button>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <button class="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash"></i></button>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">2</th>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <!-- Call to action buttons -->
+                                        <ul class="list-inline m-0">
+                                            <li class="list-inline-item">
+                                                <button class="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></button>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <button class="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash"></i></button>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">3</th>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <!-- Call to action buttons -->
+                                        <ul class="list-inline m-0">
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <button class="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></button>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <button class="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash"></i></button>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">4</th>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <!-- Call to action buttons -->
+                                        <ul class="list-inline m-0">
+                                            <li class="list-inline-item">
+                                                <button class="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></button>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <button class="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash"></i></button>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include "footer.html" %}

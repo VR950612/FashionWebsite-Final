@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fashion Website</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp"
+      crossorigin="anonymous"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      href="{{ url_for('static', filename='css/style.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='css/merchant.css') }}"
+      rel="stylesheet"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript">
+      $(function () {
+        $(".search_button").click(function () {
+          var search_word = $("#search_box").val();
+          if (search_word.trim() !== "") {
+            $.ajax({
+              type: "POST",
+              url: "/searchdata",
+              data: { search_word: search_word },
+              cache: false,
+              beforeSend: function () {
+                $("#insert_search").empty();
+                $("#flash").show();
+                $("#searchword").show();
+                $(".searchword").text(search_word);
+                $("#flash").html(
+                  '<img src="/static/img/category_2/loader.gif" align="absmiddle"> Loading Response...'
+                );
+              },
+              success: function (response) {
+                $("#insert_search").show().append(response.data);
+                $("#flash").hide();
+              },
+            });
+          }
+          return false;
+        });
+      });
+    </script>
+  </head>
+
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <a
+          class="navbar-brand"
+          href="/"
+          style="font-size:50px; color: rgba(250, 38, 102, 0.901)"
+          >Fashion Fiesta</a
+        >
+      </div>
+      <ul class="navbar-nav d-flex flex-row ms-auto">
+            Hello, {{ session['logged_in_merchant'].get('first_name', 'Guest') }}!
+         <li class="nav-item">
+        <a class="btn btn-link text-reset" href="/merchant_logout">Logout</a>
+        </li>
+      </ul>
+   </div>
+  </nav>
+  <div id="flash" style="display: none"></div>
+  <div id="insert_search"></div>
+  </body>
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+  	<!--Bootsrap 4 CDN-->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    
+    <!--Fontawesome CDN-->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+          <!-- Side Navigation -->
+          <div class="col-lg-1 col-md-2 col-sm-2 col-6 mt-5">
+            <ul class="nav nav-pills nav-stacked" style="border-right: 1px solid white; padding-right: 20x;">
+                <li>
+                    <a href="#" class="text-white" style="font-size: 25px;">
+                        <i class=""></i><br>Add New Category
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="text-white" style="font-size: 25px;">
+                        <i class=""></i><br>Display Categories
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="text-white" style="font-size: 25px;">
+                        <i class=""></i><br>Orders
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="text-white" style="font-size: 25px;">
+                        <i class=""></i><br>My Account
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-9 col-12 mt-5">
+          <!-- Form for Adding Category -->
+          <form id="add-category-form">
+              <div class="row mb-3 justify-content-end"> <!-- Add justify-content-end -->
+                  <div class="col-sm-4">
+                      <input type="text" id="category_name" class="form-control" name="category_name" placeholder="Category Name" required>
+                  </div>
+                  <div class="col-sm-4">
+                      <input type="text" id="category_code" class="form-control" name="category_code" placeholder="Category Code" required>
+                  </div>
+                  <div class="col-sm-4 text-end">
+                      <button type="submit" class="btn btn-info">Add Category</button> <!-- Changed button text -->
+                  </div>
+              </div>
+          </form>
+          
+          <!-- Table Wrapper -->
+<div class="table-wrapper">
+  <div class="table-title">
+      <div class="row">
+          <div class="col-sm-8 pt-5 text-white">
+              <h2>Category List</h2>
+          </div>
+      </div>
+  </div>
+  
+  <!-- Responsive Table -->
+  <div class="table-responsive">
+      <table class="table table-bordered pt-5">
+          <thead class="bg-dark">
+              <tr>
+                  <th class="text-white">Category Name</th>
+                  <th class="text-white">Category Code</th>
+                  <th class="text-white">Quantity in Stock</th>
+                  <th class="text-white">Delete</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr>
+                  <td class="text-white">Dress</td>
+                  <td class="text-white">DR-01</td>
+                  <td>
+                      <button type="button" class="btn btn-warning edit-btn" data-id="1">Edit</button>
+                  </td>
+                  <td>
+                      <button type="button" class="btn btn-danger delete-btn" data-id="1">Delete</button>
+                  </td>
+              </tr>
+              <tr>
+                  <td class="text-white">Jumpsuit</td>
+                  <td class="text-white">JS-05</td>
+                  <td>
+                      <button type="button" class="btn btn-warning edit-btn" data-id="2">Edit</button>
+                  </td>
+                  <td>
+                      <button type="button" class="btn btn-danger delete-btn" data-id="2">Delete</button>
+                  </td>
+              </tr>
+          </tbody>
+      </table>
+  </div>
+
+  <div class="col-m-12 pt-3 text-end">
+      <a href="merchant_addproduct" class="btn btn-info add-new">
+          <i class="fa fa-plus"></i> Add New
+      </a>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+      // Add Category
+      $('#add-category-form').submit(function(event) {
+          event.preventDefault(); // Prevent the form from submitting the normal way
+
+          var categoryName = $('#category_name').val(); // Corrected ID reference
+          var categoryCode = $('#category_code').val(); // Changed to the correct variable name
+
+          $.ajax({
+              url: '/add_category',
+              type: 'POST',
+              data: {
+                  category_name: categoryName,
+                  category_code: categoryCode // Corrected variable name
+              },
+              success: function(response) {
+                  if (response.success) {
+                      $('tbody').append('<tr>' +
+                          '<td class="text-white">' + categoryName + '</td>' + 
+                          '<td class="text-white">' + categoryCode + '</td>' +
+                          '<td>' +
+                          '</tr>');
+                      $('#category_name').val(''); // Clear the input
+                      $('#category_code').val(''); // Clear the input
+                  } else {
+                      alert('Error adding category: ' + response.message);
+                  }
+              }
+          });
+      });
+
+      // Edit Category by updating quantity
+      $(document).on('click', '.edit-btn', function() {
+          var row = $(this).closest('tr');
+          var currentQuantity = row.find('td:nth-child(3)').text(); // Adjusted to the correct column for quantity
+
+          // Prompt for new quantity
+          var newQuantity = prompt("Update Quantity", currentQuantity);
+
+          if (newQuantity) {
+              $.ajax({
+                  url: '/edit_category/', 
+                  type: 'PUT',
+                  contentType: 'application/json',
+                  data: JSON.stringify({
+                      quantity: newQuantity // Send only the quantity
+                  }),
+                  success: function(response) {
+                      if (response.success) {
+                          row.find('td:nth-child(3)').text(newQuantity); // Update quantity in the table
+                      } else {
+                          alert('Error updating category: ' + response.message);
+                      }
+                  }
+              });
+          }
+      });
+      
+      // Delete Category
+      $(document).on('click', '.delete-btn', function() {
+          var row = $(this).closest('tr');
+
+          if (confirm("Are you sure you want to delete this category?")) {
+              $.ajax({
+                  url: '/delete_category/', 
+                  type: 'DELETE',
+                  success: function(response) {
+                      if (response.success) {
+                          row.remove(); // Remove the row from the table
+                      } else {
+                          alert('Error deleting category: ' + response.message);
+                      }
+                  }
+              });
+          }
+      });
+  });
+</script>
+      
+      <!-- JavaScript -->
+      <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  </body>
+  </html>
+  

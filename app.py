@@ -3,10 +3,9 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, IntegerField, SelectField, SubmitField
 from wtforms.validators import DataRequired, InputRequired, Length
 
-
 import requests, json, os
 import stripe
-
+import logging
 
 app = Flask(__name__)
 
@@ -51,7 +50,7 @@ if 'RDS_DB_NAME' in os.environ:
     )
 else:
     # our database uri
-    # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
+    #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Adminadmin123@localhost/fashionfrontenddb'
 
 
@@ -64,6 +63,16 @@ class SignupForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField(label="Log In")
+
+class Merchant_SignupForm(FlaskForm):
+    first_name = StringField('First Name', validators=[InputRequired(), Length(min=2, max=50)])
+    last_name = StringField('Last Name', validators=[InputRequired(), Length(min=2, max=50)])
+    password = PasswordField('Password', validators=[InputRequired(), Length(min=6)])
+    
+class Merchant_LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField(label="Log In")
@@ -129,8 +138,8 @@ def dress():
         url= DRESS_CATEGORY_URL,
         headers=headers
     )
-    print(dress_category_products_response)
-    print(dress_category_products_response.status_code)
+    # print(dress_category_products_response)
+    # print(dress_category_products_response.status_code)
 
     try:
         if dress_category_products_response.status_code == 200:
@@ -138,7 +147,7 @@ def dress():
             dress_category_products_response_data = json.loads(dress_category_products_response.text)
 
             print(dress_category_products_response_data)
-            print(type(dress_category_products_response_data))
+            # print(type(dress_category_products_response_data))
      
             return render_template("dress.html", dress_category_products=dress_category_products_response_data)
         else:
@@ -240,8 +249,8 @@ def jumpsuit():
         print("Whoops something went wrong here!")
 
 
-
-@app.route("/login", methods=["GET", "POST"])
+#User Login 
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         #first grab all data from the form's variable i.e. the name property
@@ -252,7 +261,6 @@ def login():
         received_login_info_post_data = {
             "email": email,
             "password":password
-            
         }
 
         print(received_login_info_post_data)
@@ -287,7 +295,7 @@ def login():
 
                 print("CHECK2")
                 # Start the user session to login
-                session["name"] = logged_in_user_response_data["id"]
+                session["user"] = logged_in_user_response_data["id"]
                 print("CHECK3")
                 print(session)
                 print("CHECK4")
@@ -308,8 +316,15 @@ def login():
         # but if user is not logged in i.e. no active session, then go to login page
         else:
             return render_template("login.html")
-        
 
+def login_user(user):
+    session['logged_in_user'] = {
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'email': user.email
+    }
+        
+#User SignUp 
 @app.route('/register', methods=['GET','POST'])
 def register():
     if request.method == 'POST':
@@ -366,13 +381,182 @@ def register():
         
     return render_template("register.html")
 
+#Merchant Admin Login 
+@app.route('/merchant_login', methods=['GET', 'POST'])
+def merchant_login():
+    if request.method == 'POST':
+        #first grab all data from the form's variable i.e. the name property
+        merchant_email = request.form['email']
+        merchant_password = request.form['password']
+    
+    # Put this and store it in the post data variable
+        received_merchant_login_info_post_data = {
+            "email": merchant_email,
+            "password": merchant_password            
+        }
+
+        print(received_merchant_login_info_post_data)
+
+        MERCHANT_LOGIN_RECEIVED_MERCHANT_LOGIN_INFO_URL = USER_API_BASE_URL + "merchant_login"
+
+        headers = {
+            'Content-type':'application/json', 
+            'Accept':'application/json'
+        }
+
+        merchant_login_received_merchant_login_info_response = requests.post(
+            url= MERCHANT_LOGIN_RECEIVED_MERCHANT_LOGIN_INFO_URL,
+            headers=headers, 
+            json=received_merchant_login_info_post_data
+        )
+        print(merchant_login_received_merchant_login_info_response)
+        print(merchant_login_received_merchant_login_info_response.status_code)
+        #print(merchant_login_received_merchant_login_info_response)
+
+        try:
+            if merchant_login_received_merchant_login_info_response.status_code == 201:
+                logged_in_merchant_login_response_data = json.loads(merchant_login_received_merchant_login_info_response.text)
+                # Get the information of the logged in admin here
+                print(logged_in_merchant_login_response_data)
+                print(type(logged_in_merchant_login_response_data))
+
+                print("CHECK 1")
+
+                #Store the information of the logged in admin as session variable
+                session["logged_in_merchant"] = logged_in_merchant_login_response_data
+
+                print("CHECK2")
+                # Start the merchant session to login
+                session["merchant"] = logged_in_merchant_login_response_data["id"]
+                print("CHECK3")
+                print(session)
+                print("CHECK4")
+                return redirect(url_for('merchant_addnewcategory'))
+            elif merchant_login_received_merchant_login_info_response.status_code == 200:
+                # This response message must get passed to the front end registration form
+                return jsonify({'success': False, 'message': 'Sorry, admin with this email address does not exist'})            
+            else:
+                # This response message must get passed to the front end registration form
+                return jsonify({'success': False, 'message': 'Whoops something went wrong while processing this request. Try again later'})
+        except:
+            print("DID it throw an exception??")
+            return jsonify({'success': False, 'message': 'Whoops something went wrong while processing this request. Try again later'})
+    if request.method == "GET":
+        # If the admin is already logged in i.e. a session is active, then redirect to the index page
+        if session.get("name") is not None:
+            return redirect(url_for('merchant_addnewcategory'))
+        # but if admin is not logged in i.e. no active session, then go to login page
+        else:
+            return render_template("merchant_login.html")
+
+    
+def login_merchant(merchant):
+    session['logged_in_merchant'] = {
+        'email': merchant.email,
+        'password': merchant.password
+    }        
+
+@app.route('/merchant_signup', methods=['GET','POST'])
+def merchant_signup():
+    print("DOES IT EVEN COME HERE FIRST????")
+    if request.method == 'POST':
+        print("DOES IT EVEN COME HERE????")
+        #first grab all data from the form's variable i.e. the name property
+        first_name = request.form['firstname']
+        last_name = request.form['lastname']
+        email = request.form['email']
+        password = request.form['password']
+
+        # Put this and store it in the post data variable
+        new_merchant_post_data = {
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": email,
+            "password":password
+        }
+
+        print(new_merchant_post_data)
+     
+        MERCHANT_SIGNUP_NEW_MERCHANT_URL = USER_API_BASE_URL + "merchant"
+
+        headers = {
+            'Content-type':'application/json', 
+            'Accept':'application/json'
+        }
+
+        merchant_signup_new_merchant_response = requests.post(
+            url= MERCHANT_SIGNUP_NEW_MERCHANT_URL,
+            headers=headers, 
+            json=new_merchant_post_data
+        )
+        print(merchant_signup_new_merchant_response)
+        print(merchant_signup_new_merchant_response.status_code)
+        #print(signup_new_merchant_response)
+
+        try:
+            if merchant_signup_new_merchant_response.status_code == 201:
+                # This response message must get passed to the front end registration form
+                return jsonify({'success': True, 'message': 'Admin successfully registered'})
+            elif merchant_signup_new_merchant_response.status_code == 200:
+                # This response message must get passed to the front end registration form
+                return jsonify({'success': False, 'message': 'Sorry, admin with this email address already exists'})            
+            else:
+                # This response message must get passed to the front end registration form
+                return jsonify({'success': False, 'message': 'Whoops something went wrong while registering this admin. Try again later'})
+        except:
+            return jsonify({'success': False, 'message': 'Whoops something went wrong while registering this admin. Try again later'})
+        
+    return render_template("merchant_signup.html")
+
+ 
 @app.route('/logout')
 def logout():
-    #Destroy the session variable
-    session.pop("name")
-    session.pop("logged_in_user")
+    session.pop("logged_in_user", None)
+    session.pop("name", None)  
+    flash("You have been logged out.", "info")
     return redirect(url_for('index'))
-    return render_template("/")
+
+@app.route('/merchant_logout')
+def merchant_logout():
+    session.pop("logged_in_merchant", None)
+    session.pop("name", None)  
+    flash("You have been logged out.", "info")
+    return redirect(url_for('merchant_login'))
+
+@app.route("/searchdata", methods=["POST", "GET"])
+def searchdata():
+    RANDOM_PRODUCTS_URL = PRODUCT_CATEGORY_API_BASE_URL + "random-product-set"
+    headers = {
+        'Content-type': 'application/json',
+        'Accept': 'application/json'
+    }
+
+    if request.method == 'POST':
+        try:
+            search_word = request.form.get('search_word')
+            print(f"Search word: {search_word}")  
+
+            # Make API requests
+            random_products_response_one = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
+            random_products_response_two = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
+
+            # Check if API requests were successful
+            if random_products_response_one.status_code == 200 and random_products_response_two.status_code == 200:
+                random_products_response_one_data = json.loads(random_products_response_one.text)
+                random_products_response_two_data = json.loads(random_products_response_two.text)
+
+                return render_template("results.html",
+                                       random_products_one=random_products_response_one_data,
+                                       random_products_two=random_products_response_two_data)
+            else:
+                print("API request failed with status codes", random_products_response_one.status_code, random_products_response_two.status_code)
+                return render_template("results.html", error="API request failed.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return render_template("results.html", error="No products found!")
+    
+    return render_template("results.html")
+
 
 @app.route('/product/<int:product_id>')
 def single_product(product_id):
@@ -408,6 +592,8 @@ def single_product(product_id):
     except:
         print("Whoops something went wrong here!")    
     return render_template("product_details.html")
+
+          
 
 # @app.route('/sale_dresses')
 # def sale_dresses():
@@ -469,6 +655,147 @@ def stripe_checkout(product_id):
         print("Whoops something went wrong here!")
           
     return render_template("stripe_checkout.html")
+
+
+@app.route('/merchant_addproduct')
+def merchant_addproduct():
+    return render_template("merchant_addproduct.html")
+
+
+@app.route('/admin_all_categories')
+def merchant_showcategories():
+    try:
+        categories = PRODUCT_CATEGORY_API_BASE_URL() 
+        if categories is None or len(categories) == 0:
+            return render_template('merchant_showcategories.html', categories=[], error="No categories found.")
+        return render_template('merchant_showcategories.html', categories=categories)
+    except Exception as e:
+        return render_template('merchant_showcategories.html', categories=[], error=str(e))
+
+
+@app.route('/categories', methods=['GET', 'POST'])
+def categories():
+    name = session.get('name')
+    password = session.get('password')
+
+    if request.method == 'POST':
+        category_name = request.form['category_name']
+        category_code = request.form['category_code']
+
+        PRODUCT_CATEGORY_CODE_URL = PRODUCT_CATEGORY_API_BASE_URL + "/product_category_by_code/" + category_code
+        print(PRODUCT_CATEGORY_CODE_URL)
+
+        # Check if category code already exists via API
+        product_category_code_response = requests.get(PRODUCT_CATEGORY_CODE_URL)
+        if response.status_code == 200:
+            product_category_code_response_data = json.loads(product_category_code_response.text)
+
+            print(product_category_code_response_data)
+            print(type(product_category_code_response_data))
+
+            if len(product_category_code_response_data) != 0:
+                #return error message saying this category code already exists
+                flash('Category code already exists. Please use a different code.', 'error')             
+            else:
+                #call api to perform the addition of category
+                flash('Category added successfully', 'success')
+
+        '''
+        if response.status_code == 200 and response.json():
+            flash('Category name already exists. Please use a different name.', 'error')
+            return redirect(url_for('categories'))
+        
+        # Add new category via API
+        new_product_category = {
+            "category_name": category_name,
+            "category_code": category_code
+        }
+        response = requests.post(f"{PRODUCT_CATEGORY_API_BASE_URL}/all_product_categories", json=new_product_category)
+
+        if response.status_code == 201:
+            flash('Category added successfully!', 'success')
+        else:
+            flash(f'An error occurred: {response.text}', 'error')
+        '''
+        return redirect(url_for('categories'))
+
+    # Fetch all categories via API
+    response = requests.get(f"{PRODUCT_CATEGORY_API_BASE_URL}/all_product_categories")
+    categories = response.json() if response.status_code == 200 else []
+
+    return render_template('categories.html', categories=categories, name=name, password=password)
+
+
+@app.route('/merchant_viewproducts')
+def merchant_viewproducts():
+    return render_template('merchant_viewproducts.html')
+
+@app.route('/merchant_category')
+def merchant_category():
+    return render_template("merchant_category.html")
+
+@app.route('/merchant_addnewcategory', methods=['GET', 'POST'])
+def merchant_addnewcategory():
+    if request.method == 'POST':
+        category_name = request.form.get('PRODUCT_CATEGORY_API_BASE_URL')
+        category_code = request.form.get('PRODUCT_CATEGORY_API_BASE_URL')
+
+        if category_name and category_code:
+            # Here, you would typically save to your database
+            product.append({'name': category_name, 'code': category_code})
+            flash('Category added successfully!', 'success')
+            return redirect(url_for('merchant_showcategories'))
+        else:
+            flash('Please provide both category name and code.', 'danger')
+
+    return render_template('merchant_addnewcategory.html')  # Render your form template
+
+@app.route('/merchant/show_categories')
+def merchant_show_categories():
+    return render_template('merchant_showcategories.html', product=product)
+
+
+@app.route('/shopping_cart')
+def shopping_cart():
+    return render_template("shopping_cart.html")
+
+@app.route('/merchant_nav')
+def merchant_nav():
+    return render_template("merchant_nav.html")
+
+@app.route('/search', methods=['GET'])
+def search():
+    RANDOM_PRODUCTS_URL = PRODUCT_CATEGORY_API_BASE_URL + "random-product-set"
+    headers = {
+            'Content-type': 'application/json',
+            'Accept': 'application/json'
+    }
+    if request.method == 'POST':
+        try:
+            search_word = request.form.get('search_word')
+            print(f"Search word: {search_word}")  
+
+            # Make API requests
+            random_products_response_one = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
+            random_products_response_two = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
+
+            # Check if API requests were successful
+            if random_products_response_one.status_code == 200 and random_products_response_two.status_code == 200:
+                random_products_response_one_data = json.loads(random_products_response_one.text)
+                random_products_response_two_data = json.loads(random_products_response_two.text)
+
+                return render_template("search_results.html",
+                                       random_products_one=random_products_response_one_data,
+                                       random_products_two=random_products_response_two_data)
+            else:
+                print("API request failed with status codes", random_products_response_one.status_code, random_products_response_two.status_code)
+                return render_template("search_results.html", error="API request failed.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return render_template("search_results.html", error="No products found!")
+    
+    return render_template("search_results.html")
+
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)

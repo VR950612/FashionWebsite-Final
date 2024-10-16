@@ -73,20 +73,9 @@
         <a
           class="navbar-brand"
           href="/"
-          style="color: rgba(250, 38, 102, 0.901)"
+          style="font-size: 50px; color: rgba(250, 38, 102, 0.901)"
           >Fashion Fiesta</a
         >
-        <div class="d-flex">
-          <a class="btn btn-link text-reset" href="/wishlist"
-            ><i class="fa-solid fa-heart fa-2xl"></i
-          ></a>
-          <a class="btn btn-link text-reset" href="/checkout"
-            ><i class="fa-solid fa-bag-shopping fa-2xl"></i
-          ></a>
-        </div>
-      </div>
-    </nav>
-
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
         <button
@@ -100,68 +89,64 @@
         >
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="/dress"><b>Dresses</b></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/top"><b>Tops</b></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/skirt"><b>Skirts</b></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/jumpsuit"><b>Jumpsuits</b></a>
-            </li>
-          </ul>
-          <form
-            class="d-flex mx-auto align-items-center"
-            action="{{ url_for('search') }}"
-            method="GET"
-          >
-            <input
-              id="search-box"
-              class="form-control me-2"
-              type="search"
-              placeholder="Search products"
-              aria-label="Search"
-              name="query"
-            />
-            <button class="btn btn-outline-success" type="submit">
-              Search
-            </button>
-          </form>
-
-          <ul class="navbar-nav d-flex flex-row ms-auto">
-            {% if session['logged_in_user'] %}
-            <li>
-              <a href="#">
-                Welcome, {{ session['logged_in_user'].get('first_name',
-                'Guest')}}</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="btn btn-link text-reset" href="/logout">Logout</a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-              <a class="nav-link" href="/login"><b>Login</b></a>
-            </li>
-            {% endif %}
-            <li class="nav-item">
-              <a class="nav-link" href="/register"><b>Signup</b></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/merchant_login"><b>Merchant</b></a>
-            </li>
-          </ul>
         </div>
       </div>
     </nav>
+
+    <link
+    href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
+    rel="stylesheet"
+    id="bootstrap-css"
+  />
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  
+  <link
+    href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    type="text/css"
+    rel="stylesheet"
+  />
+  
+  <div
+    class="navbar navbar-inverse navbar-static-top"
+    style="background-color: white"
+  >
+    <div class="container-fluid">
+      <div class="navbar-header">
+    </div>
+      <div class="navbar-collapse collapse">
+      </div>
+    </div>
+    <div class="col-lg-1 col-md-1 col-m-2 col-xs-12">
+      <ul class="nav nav-pills nav-stacked" style="border-right: 2px solid black">
+        <!--<li class="nav-header"></li>-->
+        <li>
+          <a href="#" style="font-size: 14px"
+            ><i class="fa fa-dashboard"></i> Dashboard</a
+          >
+        </li>
+        <li>
+          <a href="#" style="font-size: 14px"
+            ><i class="fa-brands fa-product-hunt"></i> Products</a
+          >
+        </li>
+        <li>
+          <a href="#" style="font-size: 14px"
+            ><i class="fa-solid fa-bag-shopping"></i> Orders</a
+          >
+        </li>
+      </ul>
+    </div>
+    <!-- 
+    <!-- /container -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  </div>
     <div id="flash" style="display: none"></div>
     <div id="insert_search"></div>
 
     <!-- Main content goes here -->
   </body>
 </html>
+
+
