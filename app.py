@@ -756,7 +756,6 @@ def categories():
 
     return render_template('categories.html', categories=categories, name=name, password=password)
 
-
 @app.route('/merchant_viewproducts')
 def merchant_viewproducts():
     return render_template('merchant_viewproducts.html')

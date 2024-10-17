@@ -157,13 +157,13 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="category_name">Category Name</label>
-                    <input type="text" class="form-control" id="category_name" name="category_name" value="{{ all_product_categories.category_name }}" required>
+                    <input type="text" class="form-control" id="category_name" name="category_name" value="{{ product_category.category_name }}" required>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="category_code">Category Code</label>
-                    <input type="text" class="form-control" id="category_code" name="category_code" value="{{ all_product_categories.category_code }}" required>
+                    <input type="text" class="form-control" id="category_code" name="category_code" value="{{ product_category.category_code}}" required>
                 </div>
             </div>
         </div>
@@ -180,7 +180,7 @@
             var formData = $(this).serialize(); 
             
             $.ajax({
-                url: '/update_category/{{ category.id }}', 
+                url: '/update_category/{{ product_category.id}}', 
                 type: 'POST', 
                 data: formData, 
                 success: function(response) {
