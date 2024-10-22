@@ -665,7 +665,7 @@ def merchant_addproduct():
 
 #view all categories
 @app.route('/admin_all_categories')
-def merchant_showcategories():
+def merchant_show_categories():
     ALL_PRODUCT_CATEGORIES_URL = PRODUCT_CATEGORY_API_BASE_URL + "all_product_categories"
     headers = {
         'Content-type':'application/json', 
@@ -865,9 +865,6 @@ def merchant_addnewcategory():
 
     return render_template('merchant_addnewcategory.html')  # Render your form template
 
-@app.route('/merchant/show_categories')
-def merchant_show_categories():
-    return render_template('merchant_showcategories.html', product=product)
 
 
 @app.route('/shopping_cart')
