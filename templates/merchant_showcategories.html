@@ -121,6 +121,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                  <a href="{{ url_for('merchant_addproduct') }}" class="nav-link text-white" style="font-size: 17px;">
+                        <i class="fas fa-plus"></i> Add New Product
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="#" class="nav-link text-white" style="font-size: 17px;">
                         <i class="fas fa-shopping-cart"></i> Orders
                     </a>
@@ -154,14 +159,15 @@
                                 <td>{{ product_category.id }}</td>
                                 <td style="text-align: left; padding-left: 20px;">{{ product_category.category_name }}</td>
                                 <td style="text-align: left; padding-left: 20px;">{{ product_category.category_code }}</td>
-                                <td style="text-align: right; padding-right: 50px;">
-                                    <a href="#" class="btn btn-primary">Edit</a>
-                                </td>
-                                <td style="text-align: left; padding-left: 20px;">
-                                    <button class="btn btn-danger" onclick="document.getElementById('delete_model_{{product_category.id}}').style.display='block'">Delete</button>
-                                </td>
-                                <td style="text-align: left; padding-left: 15px;">
-                                    <a href="#" class="btn btn-info">View Products</a>
+                                <td>
+                                  <!-- Edit button -->
+                                  <a href="/edit/{{ product_category.id }}" class="btn btn-warning btn-sm" style="text-align: left; padding-left: 20px;">Edit</a>
+               
+                                  <!-- Delete button with confirmation -->
+                                  <form action="" method="POST" style="display: inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm" style="text-align: left;float: right; padding-left: 40px;">Delete</button>
+                                </form> 
+                                 <td style="text-align: center; padding-left: 10px;"><a href="/merchant_viewproducts/{{product_category.id}}"  class="btn btn-info">View Products</a>
                                     {% include 'delete_model.html' %}
                                 </td>
                             </tr>

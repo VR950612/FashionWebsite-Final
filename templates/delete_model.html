@@ -67,7 +67,7 @@
             message: "Delete this contact!",
           },
           type: "POST",
-          url: "/delete-proceed/{{ product_category.id }}/", // Adjust URL to use category ID
+          url: "/delete-proceed/{{ product_category.id }}/",
         }).done(function (data) {
           if (data.success) {
             $("#success-output-msg").text(data.output_msg).show();

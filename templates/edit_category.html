@@ -173,26 +173,26 @@
 
 
 
-<script>
-    $(document).ready(function() {
-        $('#update-category-form').submit(function(e) {
-            e.preventDefault(); 
-            var formData = $(this).serialize(); 
-            
-            $.ajax({
-                url: '/update_category/{{ product_category.id}}', 
-                type: 'POST', 
-                data: formData, 
-                success: function(response) {
-                    alert('Category updated successfully!');
-                    window.location.href = "/categories";
-                },
-                error: function(xhr, status, error) {
-                    alert('Error updating category: ' + error);
-                }
-            });
-        });
-    });
-</script>
+        <script>
+          $(document).ready(function() {
+              $('#update-category-form').submit(function(e) {
+                  e.preventDefault(); 
+                  var formData = $(this).serialize(); 
+                  
+                  $.ajax({
+                      url: 'update_category/{{ id }}',  
+                      type: 'POST', 
+                      data: formData, 
+                      success: function(response) {
+                          alert('Category updated successfully!');
+                          window.location.href = "/categories";  // Redirect to the categories page
+                      },
+                      error: function(xhr, status, error) {
+                          alert('Error updating category: ' + error);
+                      }
+                  });
+              });
+          });
+      </script>
 </body>
 </html>

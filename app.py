@@ -449,13 +449,14 @@ def merchant_login():
         else:
             return render_template("merchant_login.html")
 
-    
+#Merchant admin login
 def login_merchant(merchant):
     session['logged_in_merchant'] = {
         'email': merchant.email,
         'password': merchant.password
     }        
 
+#Merchant admin signup
 @app.route('/merchant_signup', methods=['GET','POST'])
 def merchant_signup():
     print("DOES IT EVEN COME HERE FIRST????")
@@ -508,7 +509,7 @@ def merchant_signup():
         
     return render_template("merchant_signup.html")
 
- 
+#User logout
 @app.route('/logout')
 def logout():
     session.pop("logged_in_user", None)
@@ -516,6 +517,7 @@ def logout():
     flash("You have been logged out.", "info")
     return redirect(url_for('index'))
 
+#Merchant admin logout
 @app.route('/merchant_logout')
 def merchant_logout():
     session.pop("logged_in_merchant", None)
@@ -661,7 +663,7 @@ def stripe_checkout(product_id):
 def merchant_addproduct():
     return render_template("merchant_addproduct.html")
 
-
+#view all categories
 @app.route('/admin_all_categories')
 def merchant_showcategories():
     ALL_PRODUCT_CATEGORIES_URL = PRODUCT_CATEGORY_API_BASE_URL + "all_product_categories"
@@ -691,8 +693,10 @@ def merchant_showcategories():
             return render_template("merchant_showcategories.html", categories=all_product_categories_response_data)
         else:
             return render_template("merchant_showcategories.html")
-    except:
-        print("Whoops something went wrong here!")
+    
+    except Exception as e:
+        print("Whoops, something went wrong:", e)
+        return render_template("merchant_showcategories.html")
     '''
     try:
         categories = PRODUCT_CATEGORY_API_BASE_URL() 
@@ -702,7 +706,6 @@ def merchant_showcategories():
     except Exception as e:
         return render_template('merchant_showcategories.html', categories=[], error=str(e))
     '''
-
 
 @app.route('/categories', methods=['GET', 'POST'])
 def categories():
@@ -756,9 +759,91 @@ def categories():
 
     return render_template('categories.html', categories=categories, name=name, password=password)
 
-@app.route('/merchant_viewproducts')
-def merchant_viewproducts():
-    return render_template('merchant_viewproducts.html')
+
+#Edit/Update a Product_Category - allows us for a PUT request and update the Product_Category with the specified ID in the database
+@app.route('/product_category/<id>', methods=['GET', 'POST'])
+def edit_category(id):
+
+    if request.method == 'POST':
+        # Get form data to update the product Category
+        category_name = request.form['category_name']
+        category_code = request.form['category_code']
+        
+        # Send PUT request to API Gateway to update the product category
+        response = requests.put(f'{PRODUCT_CATEGORY_API_BASE_URL}/{id}', json={
+            'category_name': category_name,
+            'category_code': category_code
+        })
+        
+        if response.status_code == 200:
+            flash('Product category updated successfully!', 'success')
+            return redirect(url_for('merchant_showcategories'))
+        else:
+            flash('Failed to update product category.', 'danger')
+            return redirect(url_for('edit_category', id=id))
+ 
+    # GET request: Retrieve product category details to pre-fill the form
+    response = requests.get(f'{PRODUCT_CATEGORY_API_BASE_URL}/{id}')
+    
+    if response.status_code == 200:
+        categories = response.json()
+        return render_template('edit_category.html', categories=categories)
+    else:
+        flash('Error retrieving product category details.', 'danger')
+        return redirect(url_for('merchant_showcategories'))
+    
+
+@app.route('/product_category/<int:id>', methods=['POST'])
+def update_category(id):
+    # Fetch the current category details if needed (optional)
+    product_category_code_response = f"{PRODUCT_CATEGORY_API_BASE_URL}/{id}"
+    
+    category_name = request.form.get('category_name')
+    category_code = request.form.get('category_code')
+
+    # Prepare the payload for updating the category
+    payload = {
+        'category_name': category_name,
+        'category_code': category_code
+    }
+
+    # Send the PUT request to update the category
+    response = requests.put(product_category_code_response, json=payload)
+
+    if response.status_code == 200:
+        flash('Category updated successfully!', 'success')
+    else:
+        flash('Failed to update category.', 'danger')
+
+    return redirect(url_for('categories'))
+
+@app.route('/delete-product/<int:id>/', methods=['POST'])
+def delete_product(id):
+    output_msg = ""
+    success = False
+
+    try:
+        # Check if the product to delete exists in the database
+        product_to_delete = PRODUCT_CATEGORY_API_BASE_URL
+        
+        if not product_to_delete:
+            output_msg = "Sorry, this product no longer exists in our system. Please reload the page."
+        else:
+            # Delete the product from the database
+            db.session.delete(product_to_delete)
+            db.session.commit()
+            success = True
+            output_msg = "This product has been successfully removed from the system"
+    except Exception as e:
+        output_msg = f"An error occurred while deleting the product: {str(e)}"
+
+    return jsonify({'output_msg': output_msg, 'success': success})
+
+
+@app.route('/merchant_viewproducts/<int:category_id>', methods=['GET'])
+def merchant_viewproducts(category_id):
+    product_category_id = category_id
+    return render_template("merchant_viewproducts.html")
 
 @app.route('/merchant_category')
 def merchant_category():

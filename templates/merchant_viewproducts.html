@@ -124,7 +124,7 @@
             margin-bottom: 20px;
         }
         .table-custom {
-            max-width: 2300px; /* Set maximum width */
+            max-width: 3000px; /* Set maximum width */
             margin: auto; /* Center the table */
         }
     </style>
@@ -146,6 +146,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                    <a href="{{ url_for('merchant_addproduct') }}" class="nav-link text-white" style="font-size: 17px;">
+                          <i class="fas fa-plus"></i> Add New Product
+                      </a>
+                  </li>
+                    <li class="nav-item">
                         <a href="#" class="nav-link text-white" style="font-size: 17px;">
                             <i class="fas fa-shopping-cart"></i> Orders
                         </a>
@@ -157,7 +162,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="col-lg-6 col-md-6 col-sm-8 col-6 mt-5 ms-5"> 
+            <div class="col-lg-9 col-md-9 col-sm-9 col-9 ms-5"> 
               <div class="table-responsive">
                     <div class="row mb-5 text-white"> 
                       <div class="col">
@@ -171,8 +176,10 @@
                     <thead class="bg-light">
                         <tr>
                           <th>ID</th>
+                          <th>Category Code</th>
                           <th>Product Name</th>
-                          <th>Product Code</th>
+                          <th>Product Title</th>
+                          <th>Product Description</th>
                           <th>Price</th>
                           <th>Quantity</th>
                           <th>Edit</th>
@@ -181,20 +188,38 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <td class="text-white"></td>
-                        <td class="text-white"></td>
-                        <td class="text-white"></td>
-                        <td class="text-white"></td>
-                        <td class="text-white"></td>
-                        <td>
-                          <a href="#" class="btn btn-primary">Edit</a>
-                      </td>
-                      <td>
-                          <button class="btn btn-danger">Delete</button>
-                      </td>
-                      </tbody>
-                </table>
-            </div> 
+                      <table class="table table-striped mt-3 table-custom text-white"> 
+                        {% if product %}
+                            <tbody>
+                                {% for all_products in product %}
+                                    <tr>
+                                        <td>{{ all_products.id }}</td>
+                                        <td>{{ product_category.category_code }}</td>
+                                        <td>{{ all_products.product_name }}</td>
+                                        <td>{{ all_products.product_image }}</td>
+                                        <td>{{ all_products.product_display_title }}</td>
+                                        <td>{{ all_products.product_description }}</td>
+                                        <td>{{ all_products.product_price }}</td>
+                                        <td>{{ all_products.product_quantity }}</td>
+                                        <td><a href="/edit_product/{{all_products }}" class="btn btn-primary">Edit</a></td>
+                                        <td>
+                                            <button class="btn btn-danger" onclick="document.getElementById('delete_product_model_{{ all_products.id }}').style.display='block'">Delete</button>
+                                        </td>
+                                        <td> 
+                                            {% if all_products.product_main_image %}
+                                                <img src="{{ all_products.product_main_image }}" alt="Product Image"
+                                                     style="width: 45px; height: 45px"
+                                                     class="rounded-circle" onerror="imageError(this)">
+                                            {% else %}
+                                                <p>No image available</p>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        {% endif %}
+                    </table>
+              </div> 
             <a href="javascript:history.back()" class="btn btn-info" style="background-color:black; color:white; margin-top: 40px;">Go to previous page</a>
           </div>
         </div>   
