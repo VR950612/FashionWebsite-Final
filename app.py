@@ -126,6 +126,45 @@ def product():
 
     return render_template("product.html")
 
+@app.route('/category-name/<category_name>')
+def get_product_by_category(category_name):
+    PRODUCT_BY_CATEGORY_NAME_URL = PRODUCT_CATEGORY_API_BASE_URL + "product_category_by_name/" + category_name
+    headers = {
+        'Content-type':'application/json', 
+        'Accept':'application/json'
+    }
+
+    products_by_category_name_response = requests.get(
+        url= PRODUCT_BY_CATEGORY_NAME_URL,
+        headers=headers
+    )
+    print(products_by_category_name_response)
+    print(products_by_category_name_response.status_code)
+
+    try:
+        if products_by_category_name_response.status_code == 200:
+            # This response message must get passed to the front end 
+            products_by_category_name_response_data = json.loads(products_by_category_name_response.text)
+
+            print(products_by_category_name_response_data)
+            print(type(products_by_category_name_response_data))
+            print("CHECK 1")
+
+            if(len(products_by_category_name_response_data) > 0):
+
+                products_in_category = products_by_category_name_response_data['products']
+                print(products_in_category)
+                print(type(products_in_category))
+
+                print("CHECK2")
+                return render_template("products_by_category.html", category_products=products_in_category)
+            else:
+                return render_template("products_by_category.html", category_products=None)
+        else:
+            return render_template("products_by_category.html")
+    except:
+        print("Whoops something went wrong here!")
+
 @app.route('/dress')
 def dress():
     DRESS_CATEGORY_URL = PRODUCT_CATEGORY_API_BASE_URL + "product-by-category/2"
@@ -843,7 +882,35 @@ def delete_product(id):
 @app.route('/merchant_viewproducts/<int:category_id>', methods=['GET'])
 def merchant_viewproducts(category_id):
     product_category_id = category_id
-    return render_template("merchant_viewproducts.html")
+    PRODUCT_CATEGORY_URL = PRODUCT_CATEGORY_API_BASE_URL + "product-by-category/" + str(product_category_id)
+    headers = {
+        'Content-type':'application/json', 
+        'Accept':'application/json'
+    }
+
+    products_by_category_response = requests.get(
+        url= PRODUCT_CATEGORY_URL,
+        headers=headers
+    )
+    print(products_by_category_response)
+    print(products_by_category_response.status_code)
+
+    try:
+        if products_by_category_response.status_code == 200:
+            # This response message must get passed to the front end 
+            products_by_category_response_data = json.loads(products_by_category_response.text)
+
+            print(products_by_category_response_data)
+            print(type(products_by_category_response_data))
+
+            print("CHECK 1")
+
+            print("CHECK2")      
+            return render_template("merchant_viewproducts.html", products=products_by_category_response_data)
+        else:
+            return render_template("merchant_viewproducts.html", products=None)
+    except:
+        print("Whoops something went wrong here!")
 
 @app.route('/merchant_category')
 def merchant_category():
