@@ -162,12 +162,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                      <a href="{{ url_for('merchant_addproduct') }}" class="nav-link text-white" style="font-size: 17px;">
+                      <a href="/merchant_addproduct" class="nav-link text-white" style="font-size: 17px;">
                             <i class="fas fa-plus"></i> Add New Product
                         </a>
                     </li>
                     <li class="nav-item">
-                      <a href="{{ url_for('merchant_viewproducts') }}" class="nav-link text-white" style="font-size: 17px;">
+                      <a href="/merchant_viewproducts" class="nav-link text-white" style="font-size: 17px;">
                           <i class="fas fa-list"></i> Display Products
                       </a>
                   </li>
@@ -184,8 +184,8 @@
                 </ul>
             </div>
             <div class="container">
-              <form action="/addnewproduct" enctype="multipart/form-data" method="POST">
-                  <div class="text-white" style="margin-top: 5px;">  
+              <form action="addproduct" enctype="multipart/form-data" method="POST">
+                  <div class="text-white" style="margin-top: 5px;">   
                     <h1 style="font-size: 2em; margin-left: 20px;">Add New Product</h1>
                       <div class="row" style="margin-top: 10px;">
                           <div class="col-md-4 ms-3">

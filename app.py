@@ -1,7 +1,11 @@
-from flask import Flask, render_template, request, session, redirect, url_for, jsonify, flash
+from flask import Flask, render_template, request, session, redirect, url_for, jsonify
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, IntegerField, SelectField, SubmitField
 from wtforms.validators import DataRequired, InputRequired, Length
+from werkzeug.utils import secure_filename
+from datetime import datetime as dt
+from flask import Flask, flash
+
 
 import requests, json, os
 import stripe
@@ -564,41 +568,41 @@ def merchant_logout():
     flash("You have been logged out.", "info")
     return redirect(url_for('merchant_login'))
 
-@app.route("/searchdata", methods=["POST", "GET"])
-def searchdata():
-    RANDOM_PRODUCTS_URL = PRODUCT_CATEGORY_API_BASE_URL + "random-product-set"
-    headers = {
-        'Content-type': 'application/json',
-        'Accept': 'application/json'
-    }
+# @app.route("/searchdata", methods=["POST", "GET"])
+# def searchdata():
+#     RANDOM_PRODUCTS_URL = PRODUCT_CATEGORY_API_BASE_URL + "random-product-set"
+#     headers = {
+#         'Content-type': 'application/json',
+#         'Accept': 'application/json'
+#     }
 
-    if request.method == 'POST':
-        try:
-            search_word = request.form.get('search_word')
-            print(f"Search word: {search_word}")  
+#     if request.method == 'POST':
+#         try:
+#             search_word = request.form.get('search_word')
+#             print(f"Search word: {search_word}")  
 
-            # Make API requests
-            random_products_response_one = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
-            random_products_response_two = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
+#             # Make API requests
+#             random_products_response_one = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
+#             random_products_response_two = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
 
-            # Check if API requests were successful
-            if random_products_response_one.status_code == 200 and random_products_response_two.status_code == 200:
-                random_products_response_one_data = json.loads(random_products_response_one.text)
-                random_products_response_two_data = json.loads(random_products_response_two.text)
+#             # Check if API requests were successful
+#             if random_products_response_one.status_code == 200 and random_products_response_two.status_code == 200:
+#                 random_products_response_one_data = json.loads(random_products_response_one.text)
+#                 random_products_response_two_data = json.loads(random_products_response_two.text)
 
-                return render_template("results.html",
-                                       random_products_one=random_products_response_one_data,
-                                       random_products_two=random_products_response_two_data)
-            else:
-                print("API request failed with status codes", random_products_response_one.status_code, random_products_response_two.status_code)
-                return render_template("results.html", error="API request failed.")
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            return render_template("results.html", error="No products found!")
+#                 return render_template("results.html",
+#                                        random_products_one=random_products_response_one_data,
+#                                        random_products_two=random_products_response_two_data)
+#             else:
+#                 print("API request failed with status codes", random_products_response_one.status_code, random_products_response_two.status_code)
+#                 return render_template("results.html", error="API request failed.")
+#         except Exception as e:
+#             print(f"An error occurred: {e}")
+#             return render_template("results.html", error="No products found!")
     
-    return render_template("results.html")
+#     return render_template("results.html")
 
-
+#Single product details
 @app.route('/product/<int:product_id>')
 def single_product(product_id):
     PRODUCT_DETAILS_URL = PRODUCT_CATEGORY_API_BASE_URL + "product/" + str(product_id)
@@ -698,10 +702,6 @@ def stripe_checkout(product_id):
     return render_template("stripe_checkout.html")
 
 
-@app.route('/merchant_addproduct')
-def merchant_addproduct():
-    return render_template("merchant_addproduct.html")
-
 #view all categories
 @app.route('/admin_all_categories')
 def merchant_show_categories():
@@ -746,6 +746,7 @@ def merchant_show_categories():
         return render_template('merchant_showcategories.html', categories=[], error=str(e))
     '''
 
+#categories
 @app.route('/categories', methods=['GET', 'POST'])
 def categories():
     name = session.get('name')
@@ -799,7 +800,25 @@ def categories():
     return render_template('categories.html', categories=categories, name=name, password=password)
 
 
-#Edit/Update a Product_Category - allows us for a PUT request and update the Product_Category with the specified ID in the database
+#merchant admin add new category
+@app.route('/merchant_addnewcategory', methods=['GET', 'POST'])
+def merchant_addnewcategory():
+    if request.method == 'POST':
+        category_name = request.form.get('PRODUCT_CATEGORY_API_BASE_URL')
+        category_code = request.form.get('PRODUCT_CATEGORY_API_BASE_URL')
+
+        if category_name and category_code:
+            # Here, you would typically save to your database
+            product.append({'name': category_name, 'code': category_code})
+            flash('Category added successfully!', 'success')
+            return redirect(url_for('merchant_showcategories'))
+        else:
+            flash('Please provide both category name and code.', 'danger')
+
+    return render_template('merchant_addnewcategory.html')  # Render your form template
+
+
+#Edit a Product_Category - allows us for a PUT request and update the Product_Category with the specified ID in the database
 @app.route('/product_category/<id>', methods=['GET', 'POST'])
 def edit_category(id):
 
@@ -831,7 +850,7 @@ def edit_category(id):
         flash('Error retrieving product category details.', 'danger')
         return redirect(url_for('merchant_showcategories'))
     
-
+#Update a Product_Category
 @app.route('/product_category/<int:id>', methods=['POST'])
 def update_category(id):
     # Fetch the current category details if needed (optional)
@@ -856,6 +875,7 @@ def update_category(id):
 
     return redirect(url_for('categories'))
 
+#delete product category
 @app.route('/delete-product/<int:id>/', methods=['POST'])
 def delete_product(id):
     output_msg = ""
@@ -879,6 +899,7 @@ def delete_product(id):
     return jsonify({'output_msg': output_msg, 'success': success})
 
 
+# #merchant admin view all products
 @app.route('/merchant_viewproducts/<int:category_id>', methods=['GET'])
 def merchant_viewproducts(category_id):
     product_category_id = category_id
@@ -911,36 +932,87 @@ def merchant_viewproducts(category_id):
             return render_template("merchant_viewproducts.html", products=None)
     except:
         print("Whoops something went wrong here!")
+        return render_template("merchant_viewproducts.html", products=None)
 
-@app.route('/merchant_category')
-def merchant_category():
-    return render_template("merchant_category.html")
-
-@app.route('/merchant_addnewcategory', methods=['GET', 'POST'])
-def merchant_addnewcategory():
+   
+#merchant admin add new product
+@app.route('/merchant_addproduct/<int:category_id>', methods=['GET', 'POST'])
+def merchant_addproduct(category_id):
+    name = session.get('name')
+    password = session.get('password')
     if request.method == 'POST':
-        category_name = request.form.get('PRODUCT_CATEGORY_API_BASE_URL')
-        category_code = request.form.get('PRODUCT_CATEGORY_API_BASE_URL')
+        # Retrieve form data and handle file uploads
+        id = request.form ['product_category_id']
+        category_code = request.form ['category_id']
+        product_name = request.form['product_name']
+        product_title = request.form['product_display_title']
+        product_description = request.form['product_description']
+        price = float(request.form['product_price'])
+        product_quantity = int(request.form['product_quantity'])
+        product_main_image = request.files['product_main_image']
+        product_secondary_image1 = request.files.get('product_secondary_image1')
+        product_secondary_image2 = request.files.get('product_secondary_image2')
 
-        if category_name and category_code:
-            # Here, you would typically save to your database
-            product.append({'name': category_name, 'code': category_code})
-            flash('Category added successfully!', 'success')
-            return redirect(url_for('merchant_showcategories'))
+        # Save the images
+        main_image_path = save_file(product_main_image, app.config['PRODUCT_IMAGE_UPLOAD_FOLDER'])
+        secondary_image1_path = save_file(product_secondary_image1, app.config['PRODUCT_IMAGE_UPLOAD_FOLDER']) if product_secondary_image1 else None
+        secondary_image2_path = save_file(product_secondary_image2, app.config['PRODUCT_IMAGE_UPLOAD_FOLDER']) if product_secondary_image2 else None
+
+
+        PRODUCT_CATEGORY_CODE_URL = PRODUCT_CATEGORY_API_BASE_URL + "/product_category_by_code/" + category_id
+        print(PRODUCT_CATEGORY_CODE_URL)
+
+        # Check if category code already exists via API
+        product_category_code_response = requests.get(PRODUCT_CATEGORY_CODE_URL)
+        if response.status_code == 200:
+            product_category_code_response_data = json.loads(product_category_code_response.text)
+
+            print(product_category_code_response_data)
+            print(type(product_category_code_response_data))
+
+        if len(product_category_code_response_data) != 0:
+                #return error message saying this category code already exists
+            flash('Category code already exists. Please use a different code.', 'error')             
         else:
-            flash('Please provide both category name and code.', 'danger')
+                
+        # Fetch all products via API
+            response = requests.get(f"{PRODUCT_CATEGORY_API_BASE_URL}/all_product_categories")
+            categories = response.json() if response.status_code == 200 else []
 
-    return render_template('merchant_addnewcategory.html')  # Render your form template
+    return render_template('merchant_viewproducts.html', product=product, name=name, password=password)
 
+def save_file(file, upload_folder):
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        dt_now = dt.now().strftime("%Y%m%d%H%M%S%f")
+        file_extension = filename.rsplit('.', 1)[1].lower()
+        filename_to_save = f"{dt_now}_{filename}"
+        file_path = os.path.join(upload_folder, filename_to_save)
+        file.save(file_path)
+        return file_path
+    return None
+
+# Define the allowed_file function
+def allowed_file(filename):
+    allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}  # Add your allowed extensions here
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
+# @app.route('/merchant_category')
+# def merchant_category():
+#     return render_template("merchant_category.html")
+
+# @app.route('/merchant_addproduct')
+# def merchant_addproduct():
+#     return render_template("merchant_addproduct.html")
 
 
 @app.route('/shopping_cart')
 def shopping_cart():
     return render_template("shopping_cart.html")
 
-@app.route('/merchant_nav')
-def merchant_nav():
-    return render_template("merchant_nav.html")
+# @app.route('/merchant_nav')
+# def merchant_nav():
+#     return render_template("merchant_nav.html")
 
 @app.route('/search', methods=['GET'])
 def search():
