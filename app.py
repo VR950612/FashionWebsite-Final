@@ -875,9 +875,10 @@ def update_category(id):
 
     return redirect(url_for('categories'))
 
+
 #delete product category
-@app.route('/delete-product/<int:id>/', methods=['POST'])
-def delete_product(id):
+@app.route('/delete-productcategory/<int:id>/', methods=['POST'])
+def delete_productcategory(id):
     output_msg = ""
     success = False
 
@@ -936,25 +937,25 @@ def merchant_viewproducts(category_id):
 
    
 #merchant admin add new product
-@app.route('/merchant_addproduct/<int:category_id>', methods=['GET', 'POST'])
-def merchant_addproduct(category_id):
+@app.route('/merchant_new_addproduct/<int:category_id>', methods=['GET', 'POST'])
+def merchant_new_addproduct(category_id):
     name = session.get('name')
     password = session.get('password')
     if request.method == 'POST':
         # Retrieve form data and handle file uploads
-        id = request.form ['product_category_id']
+        id = request.form ['product_id']
         category_code = request.form ['category_id']
         product_name = request.form['product_name']
         product_title = request.form['product_display_title']
         product_description = request.form['product_description']
         price = float(request.form['product_price'])
         product_quantity = int(request.form['product_quantity'])
-        product_main_image = request.files['product_main_image']
+        product_image = request.files['product_image']
         product_secondary_image1 = request.files.get('product_secondary_image1')
         product_secondary_image2 = request.files.get('product_secondary_image2')
 
         # Save the images
-        main_image_path = save_file(product_main_image, app.config['PRODUCT_IMAGE_UPLOAD_FOLDER'])
+        main_image_path = save_file(product_image, app.config['PRODUCT_IMAGE_UPLOAD_FOLDER'])
         secondary_image1_path = save_file(product_secondary_image1, app.config['PRODUCT_IMAGE_UPLOAD_FOLDER']) if product_secondary_image1 else None
         secondary_image2_path = save_file(product_secondary_image2, app.config['PRODUCT_IMAGE_UPLOAD_FOLDER']) if product_secondary_image2 else None
 
@@ -1001,9 +1002,134 @@ def allowed_file(filename):
 # def merchant_category():
 #     return render_template("merchant_category.html")
 
-# @app.route('/merchant_addproduct')
-# def merchant_addproduct():
-#     return render_template("merchant_addproduct.html")
+#edit/update product
+@app.route('/edit_product/<int:product_id>', methods=['GET', 'POST'])
+def edit_product(product_id):
+    product_category_id = "1"  # Or fetch dynamically if needed
+    url = f"{PRODUCT_CATEGORY_API_BASE_URL}/product/{product_id}"
+    
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        product = response.json()
+
+        # Example of fetching the product category, assuming it has a similar endpoint
+        category_response = requests.get(f"{PRODUCT_CATEGORY_API_BASE_URL}/category/{product_category_id}")
+        if category_response.status_code == 200:
+            product_category = category_response.json()  # Assuming this gives you the category object
+        else:
+            product_category = None  # Handle cases where the category is not found
+
+        if request.method == 'POST':
+            # Handle form submission
+            try:
+                product_name = request.form.get('product_name', '')
+                product_category = request.form.get('product_category', '')
+                product_display_title = request.form.get('product_display_title', '')
+                product_description = request.form.get('product_description', '')
+                product_price = float(request.form.get('product_price', 0))
+                product_quantity = int(request.form.get('product_quantity', 0))
+
+                if update_product(product_id, product_name, product_category, product_display_title, product_description, product_price, product_quantity):
+                    flash('Product updated successfully!')
+                else:
+                    flash('Product update failed. Product not found.')
+
+                return redirect(url_for('merchant_viewproducts', product_id=product_id))
+
+            except Exception as e:
+                flash(f'Error updating product: {str(e)}')
+                return redirect(url_for('edit_product', product_id=product_id))
+
+        return render_template('edit_product.html', product=product, product_category=product_category)
+
+    else:
+        flash('Product not found!')
+        return redirect(url_for('merchant_viewproducts', category_id=1))
+
+def update_product(product_id, product_name, product_category, product_display_title, product_description, product_price, product_quantity):
+    product = (f"{PRODUCT_CATEGORY_API_BASE_URL}/{product_id}")
+    if product is None:
+        return False  
+
+    # Update product attributes
+    product.name = product_name
+    product.category = product_category
+    product.display_title = product_display_title
+    product.description = product_description
+    product.price = product_price
+    product.quantity = product_quantity
+
+    return True  
+
+#delete product
+@app.route('/delete_product/<int:product_id>', methods=['DELETE'])
+def delete_product(product_id):
+    output_msg = ""
+    success = False
+
+    try:
+        # Assuming PRODUCT_CATEGORY_API_BASE_URL is defined elsewhere
+        product_to_delete = f"{PRODUCT_CATEGORY_API_BASE_URL}/{product_id}"
+        
+        # Check if the product exists before trying to delete it
+        response_check = requests.get(product_to_delete)
+        if response_check.status_code != 200:
+            output_msg = "Sorry, this product no longer exists in our system."
+        else:
+            # Attempt to delete the product
+            response = requests.delete(product_to_delete)
+            if response.status_code == 204:
+                success = True
+                output_msg = "This product has been successfully removed from the system."
+                flash(output_msg)  # Flash the success message
+            else:
+                output_msg = f"Failed to delete the product. Status code: {response.status_code}"
+    except Exception as e:
+        output_msg = f"An error occurred while deleting the product: {str(e)}"
+
+    return jsonify({'output_msg': output_msg, 'success': success})
+
+    
+#delete category
+@app.route('/delete-category/<int:category_id>', methods=['DELETE'])
+def delete_category(category_id):
+    product_category_id = category_id
+    PRODUCT_CATEGORY_URL = PRODUCT_CATEGORY_API_BASE_URL + "product-by-category/" + str(product_category_id)
+    headers = {
+        'Content-type':'application/json', 
+        'Accept':'application/json'
+    }
+
+    products_by_category_response = requests.delete(
+        url= PRODUCT_CATEGORY_URL,
+        headers=headers
+    )
+    print(products_by_category_response)
+    print(products_by_category_response.status_code)
+
+    try:
+        if products_by_category_response.status_code == 200:
+            # This response message must get passed to the front end 
+            products_by_category_response_data = json.loads(products_by_category_response.text)
+
+            print(products_by_category_response_data)
+            print(type(products_by_category_response_data))
+
+            print("CHECK 1")
+
+            print("CHECK2")      
+            return render_template("merchant_viewproducts.html", products=products_by_category_response_data)
+        else:
+            return render_template("merchant_viewproducts.html", products=None)
+    except:
+        print("Sorry, this product no longer exists in our system. Please reload the page!.")
+        return render_template("merchant_viewproducts.html", products=None)
+
+  
+@app.route('/merchant_addproduct')
+def merchant_addproduct():
+    return render_template("merchant_addproduct.html")
 
 
 @app.route('/shopping_cart')

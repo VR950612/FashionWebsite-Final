@@ -161,16 +161,16 @@
     <!-- Form to update product with AJAX -->
     <form id="update-product-form" action="{{ url_for('edit_product', product_id=product.id) }}" method="POST" enctype="multipart/form-data">
         <div class="form-group">
-            <label for="product_name">Product Name</label>
+            <label for="product_name">Product Category</label>
+            <input type="text" class="form-control" id="product_category" name="product_category" value="{{ product.product_category }}" required>
+        </div>
+        <div class="form-group">
+            <label for="product_code">Product Name</label>
             <input type="text" class="form-control" id="product_name" name="product_name" value="{{ product.product_name }}" required>
         </div>
         <div class="form-group">
-            <label for="product_code">Product Code</label>
-            <input type="text" class="form-control" id="product_code" name="product_code" value="{{ product.product_code }}" required>
-        </div>
-        <div class="form-group">
-            <label for="product_title">Product Title</label>
-            <input type="text" class="form-control" id="product_title" name="product_title" value="{{ product.product_display_titleitle }}" required>
+            <label for="product_title">Product Display Title</label>
+            <input type="text" class="form-control" id="product_title" name="product_title" value="{{ product.product_display_title }}" required>
         </div>
         <div class="form-group">
             <label for="product_description">Product Description</label>
@@ -184,10 +184,9 @@
             <label for="product_quantity">Product Quantity</label>
             <input type="number" class="form-control" id="product_quantity" name="product_quantity" value="{{ product.product_quantity }}" required>
         </div>
-        <!-- Hidden input fields to store product and category IDs -->
+        <!-- Hidden input fields to store product ID -->
         <input type="hidden" id="product_id" name="product_id" value="{{ product.id }}">
-        <input type="hidden" id="product__category.id" name="product__category.id" value="{{ product_category.id }}">
-        <button type="submit" class="btn btn-primary">Update Product</button>
+          <button type="submit" class="btn btn-primary">Update Product</button>
     </form>
 </div>
 
@@ -204,12 +203,12 @@ $(document).ready(function() {
         var productId = $('#product_id').val();
 
         $.ajax({
-            url: '/edit_product/' + productId, // Update the URL with the product ID
+            url: '/edit_product/' + product_id, // Update the URL with the product ID
             type: 'POST', 
             data: formData, 
             success: function(response) {
                 alert('Product updated successfully!');
-                window.location.href = '/viewproducts/{{ product_category.id }}'; // Redirect to viewproducts page
+                window.location.href = '/merchant_viewproducts/{{ product_category.id }}'; // Redirect to viewproducts page
             },
             error: function(xhr, status, error) {
                 alert('Error updating product: ' + error);
