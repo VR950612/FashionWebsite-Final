@@ -155,11 +155,6 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                  <a href="/merchant_addproduct" class="nav-link text-white" style="font-size: 17px;">
-                        <i class="fas fa-plus"></i> Add New Product
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a href="#" class="nav-link text-white" style="font-size: 17px;">
                         <i class="fas fa-shopping-cart"></i> Orders
                     </a>
@@ -207,10 +202,12 @@
                               <td>{{ product.product_description }}</td>
                               <td>{{ product.product_price }}</td>
                               <td>{{ product.product_quantity }}</td>
-                              <td><a href="/edit_product/{{product.id}}" class="btn btn-warning btn-sm">Edit</a></td>
                               <td>
-                                <button class="btn btn-danger" onclick="deleteProduct({{ product.id }})">Delete</button>
-                              </td>
+                                <a href="/edit_product/{{product.id}}" class="btn btn-warning btn-sm h-100">Edit</a>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger btn-sm h-100" onclick="deleteProduct({{ product.id }})">Delete</button>
+                            </td>
                               <td> 
                                   {% if product.product_image %}
                                       <img src="/{{ product.product_image }}" alt="Product Image"

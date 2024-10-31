@@ -1035,32 +1035,41 @@ def edit_product(product_id):
                 else:
                     flash('Product update failed. Product not found.')
 
-                return redirect(url_for('merchant_viewproducts', product_id=product_id))
+                return redirect(url_for("merchant_viewproducts", product_id=product_id))
 
             except Exception as e:
                 flash(f'Error updating product: {str(e)}')
-                return redirect(url_for('edit_product', product_id=product_id))
+                return redirect(url_for("edit_product", product_id=product_id))
 
-        return render_template('edit_product.html', product=product, product_category=product_category)
+        return render_template("edit_product.html", product=product, product_category=product_category)
 
     else:
         flash('Product not found!')
-        return redirect(url_for('merchant_viewproducts', category_id=1))
+        return redirect(url_for("merchant_viewproducts", category_id=1))
 
 def update_product(product_id, product_name, product_category, product_display_title, product_description, product_price, product_quantity):
-    product = (f"{PRODUCT_CATEGORY_API_BASE_URL}/{product_id}")
-    if product is None:
-        return False  
+    url = f"{PRODUCT_CATEGORY_API_BASE_URL}/product/{product_id}"
+    
+    # Create the updated product data
+    updated_data = {
+        "product_name": product_name,
+        "product_category": product_category,
+        "product_display_title": product_display_title,
+        "product_description": product_description,
+        "product_price": product_price,
+        "product_quantity": product_quantity
+    }
 
-    # Update product attributes
-    product.name = product_name
-    product.category = product_category
-    product.display_title = product_display_title
-    product.description = product_description
-    product.price = product_price
-    product.quantity = product_quantity
+    # Make a PUT request to update the product
+    response = requests.put(url, json=updated_data)
 
-    return True  
+    # Check if the update was successful
+    if response.status_code == 200:
+        return True
+    else:
+        print("Update failed:", response.status_code, response.text)  # Log error for debugging
+        return False
+
 
 #delete product
 @app.route('/delete_product/<int:product_id>', methods=['DELETE'])
