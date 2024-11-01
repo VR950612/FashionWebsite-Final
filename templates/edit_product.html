@@ -208,7 +208,7 @@ $(document).ready(function() {
           data: formData, 
           success: function(response) {
               alert('Product updated successfully!');
-              window.location.href = '/merchant_viewproducts/{{ product_category.id }}'; 
+              window.location.href = '/merchant_viewproducts/{{ product.product_category }}'; 
           },
           error: function(xhr, status, error) {
               alert('Error updating product: ' + error);

@@ -937,65 +937,90 @@ def merchant_viewproducts(category_id):
 
    
 #merchant admin add new product
-@app.route('/merchant_new_addproduct/<int:category_id>', methods=['GET', 'POST'])
-def merchant_new_addproduct(category_id):
+@app.route('/merchant_addproduct/<int:product_id>', methods=['POST'])
+def add_newproduc(product_id):
     name = session.get('name')
     password = session.get('password')
+
     if request.method == 'POST':
-        # Retrieve form data and handle file uploads
-        id = request.form ['product_id']
-        category_code = request.form ['category_id']
+        # Retrieve form data
         product_name = request.form['product_name']
-        product_title = request.form['product_display_title']
+        product_category = request.form['product_category']
+        product_display_title = request.form['product_display_title']
         product_description = request.form['product_description']
         price = float(request.form['product_price'])
         product_quantity = int(request.form['product_quantity'])
-        product_image = request.files['product_image']
-        product_secondary_image1 = request.files.get('product_secondary_image1')
-        product_secondary_image2 = request.files.get('product_secondary_image2')
 
-        # Save the images
-        main_image_path = save_file(product_image, app.config['PRODUCT_IMAGE_UPLOAD_FOLDER'])
-        secondary_image1_path = save_file(product_secondary_image1, app.config['PRODUCT_IMAGE_UPLOAD_FOLDER']) if product_secondary_image1 else None
-        secondary_image2_path = save_file(product_secondary_image2, app.config['PRODUCT_IMAGE_UPLOAD_FOLDER']) if product_secondary_image2 else None
+        # Initialize image paths
+        image_paths = {}
 
+        try:
+            # Save product images
+            image_paths = save_product_images(
+                main_image=request.files['product_main_image'],
+                secondary_image1=request.files.get('product_secondary_image1'),
+                secondary_image2=request.files.get('product_secondary_image2'),
+                upload_folder=app.config['PRODUCT_IMAGE_UPLOAD_FOLDER']
+            )
+        except Exception as e:
+            flash(f'Error saving images: {str(e)}', 'error')
+            return render_template('merchant_viewproducts.html', name=name, password=password)
 
-        PRODUCT_CATEGORY_CODE_URL = PRODUCT_CATEGORY_API_BASE_URL + "/product_category_by_code/" + category_id
-        print(PRODUCT_CATEGORY_CODE_URL)
+        # Construct product_data after saving images
+        product_data = {
+            "product_name": product_name,
+            "product_category": product_category,
+            "product_display_title": product_display_title,
+            "product_description": product_description,
+            "product_price": price,
+            "product_quantity": product_quantity,
+            "main_image": image_paths.get('main_image'),
+            "secondary_image1": image_paths.get('secondary_image1'),
+            "secondary_image2": image_paths.get('secondary_image2'),
+            "product_id": product_id  # Keep the product_id for reference
+        }
 
-        # Check if category code already exists via API
-        product_category_code_response = requests.get(PRODUCT_CATEGORY_CODE_URL)
-        if response.status_code == 200:
-            product_category_code_response_data = json.loads(product_category_code_response.text)
+        # Update the URL to match your defined route (if necessary)
+        add_product_url = f"{PRODUCT_CATEGORY_API_BASE_URL}/merchant_addproduct/{product_id}"
+        add_product_response = requests.post(add_product_url, json=product_data)
 
-            print(product_category_code_response_data)
-            print(type(product_category_code_response_data))
-
-        if len(product_category_code_response_data) != 0:
-                #return error message saying this category code already exists
-            flash('Category code already exists. Please use a different code.', 'error')             
+        if add_product_response.status_code == 201:
+            flash('Product added successfully!')
         else:
-                
-        # Fetch all products via API
-            response = requests.get(f"{PRODUCT_CATEGORY_API_BASE_URL}/all_product_categories")
-            categories = response.json() if response.status_code == 200 else []
+            flash('Failed to add product. Please try again.', 'error')
 
-    return render_template('merchant_viewproducts.html', product=product, name=name, password=password)
+    return render_template('merchant_viewproducts.html', name=name, password=password)
+
+
+def save_product_images(main_image, secondary_image1=None, secondary_image2=None, upload_folder=None):
+    image_paths = {}
+
+    if main_image and allowed_file(main_image.filename):
+        main_image_path = save_file(main_image, upload_folder)
+        image_paths['main_image'] = main_image_path
+
+    if secondary_image1 and allowed_file(secondary_image1.filename):
+        secondary_image1_path = save_file(secondary_image1, upload_folder)
+        image_paths['secondary_image1'] = secondary_image1_path
+
+    if secondary_image2 and allowed_file(secondary_image2.filename):
+        secondary_image2_path = save_file(secondary_image2, upload_folder)
+        image_paths['secondary_image2'] = secondary_image2_path
+
+    return image_paths
 
 def save_file(file, upload_folder):
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         dt_now = dt.now().strftime("%Y%m%d%H%M%S%f")
-        file_extension = filename.rsplit('.', 1)[1].lower()
         filename_to_save = f"{dt_now}_{filename}"
         file_path = os.path.join(upload_folder, filename_to_save)
         file.save(file_path)
         return file_path
     return None
 
-# Define the allowed_file function
 def allowed_file(filename):
-    allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}  # Add your allowed extensions here
+    allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}  # Adjust as needed
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 # @app.route('/merchant_category')
@@ -1071,16 +1096,14 @@ def update_product(product_id, product_name, product_category, product_display_t
         return False
 
 
-#delete product
+# Delete product
 @app.route('/delete_product/<int:product_id>', methods=['DELETE'])
-def delete_product(product_id):
+def merchant_deleteproduct(product_id):
     output_msg = ""
-    success = False
 
     try:
-        # Assuming PRODUCT_CATEGORY_API_BASE_URL is defined elsewhere
-        product_to_delete = f"{PRODUCT_CATEGORY_API_BASE_URL}/{product_id}"
-        
+        product_to_delete = f"{PRODUCT_CATEGORY_API_BASE_URL}/product/{product_id}"
+
         # Check if the product exists before trying to delete it
         response_check = requests.get(product_to_delete)
         if response_check.status_code != 200:
@@ -1089,15 +1112,18 @@ def delete_product(product_id):
             # Attempt to delete the product
             response = requests.delete(product_to_delete)
             if response.status_code == 204:
-                success = True
                 output_msg = "This product has been successfully removed from the system."
-                flash(output_msg)  # Flash the success message
             else:
-                output_msg = f"Failed to delete the product. Status code: {response.status_code}"
+                output_msg = f"Failed to delete the product. Status code: {response.status_code}, Message: {response.text}"
+        
+        flash(output_msg)  # Flash the success or error message
+
     except Exception as e:
         output_msg = f"An error occurred while deleting the product: {str(e)}"
+        flash(output_msg)
 
-    return jsonify({'output_msg': output_msg, 'success': success})
+    # Redirect back to the product list or the appropriate page
+    return redirect(url_for("merchant_viewproducts", category_id=1))
 
     
 #delete category

@@ -1,4 +1,3 @@
-<!-- Delete Product Modal code -->
 <div id="delete_product_model_{{ product.id }}" class="modal">
   <span
     onclick="document.getElementById('delete_product_model_{{ product.id }}').style.display='none'"
@@ -9,8 +8,17 @@
   <form
     id="delete_product_form_{{ product.id }}"
     class="modal-content"
-    action=""
+    action="{{ url_for('merchant_deleteproduct', product_id=product.id) }}"
+    <!--
+    Set
+    the
+    action
+    URL
+    --
   >
+    method="POST"
+    <!-- Use POST method -->
+    >
     <div
       class="container"
       style="
@@ -31,7 +39,7 @@
         >
           Cancel
         </button>
-        <!-- But if we want to delete then call the function to delete it and reload the product's page-->
+        <!-- Submit button for deletion -->
         <input
           type="submit"
           class="deletebtn btn-danger btn-md"
@@ -62,7 +70,7 @@
 
       $.ajax({
         type: "POST",
-        url: "/delete_product/{{ product.id }}/",
+        url: $(this).attr("action"), // Use the form's action attribute
         data: {
           message: "Delete this product!",
         },
@@ -77,7 +85,8 @@
               .delay(3000) // Show for 3 seconds
               .fadeOut(); // Fade out after 3 seconds
             setTimeout(function () {
-              window.location.href = "/merchant_viewproducts/{{ product.id }}";
+              window.location.href =
+                "/merchant_viewproducts/{{product.product_category}}"; // Redirect to the product list (adjust as necessary)
             }, 3000); // Redirect after 3 seconds
           } else {
             $("#failure-output-msg-{{ product.id }}")
