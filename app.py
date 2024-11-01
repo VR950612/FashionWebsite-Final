@@ -1060,11 +1060,11 @@ def edit_product(product_id):
                 else:
                     flash('Product update failed. Product not found.')
 
-                return redirect(url_for("merchant_viewproducts", product_id=product_id))
+                return redirect(url_for("merchant_viewproducts", category_id=product_category))
 
             except Exception as e:
                 flash(f'Error updating product: {str(e)}')
-                return redirect(url_for("edit_product", product_id=product_id))
+                return redirect(url_for("edit_product", category_id=1))
 
         return render_template("edit_product.html", product=product, product_category=product_category)
 
@@ -1100,16 +1100,26 @@ def update_product(product_id, product_name, product_category, product_display_t
 @app.route('/delete_product/<int:product_id>', methods=['DELETE'])
 def merchant_deleteproduct(product_id):
     output_msg = ""
+    product_to_be_deleted = None
+    product_category=0
 
     try:
         product_to_delete = f"{PRODUCT_CATEGORY_API_BASE_URL}/product/{product_id}"
 
         # Check if the product exists before trying to delete it
         response_check = requests.get(product_to_delete)
+        print("RESPONSE CHECK FOR PRODUCT TO DELETE")
+        print(response_check)
         if response_check.status_code != 200:
             output_msg = "Sorry, this product no longer exists in our system."
         else:
             # Attempt to delete the product
+            product_to_be_deleted = json.loads(response_check.text)
+            print("PRODUCT TO BE DELETED")
+            print(product_to_be_deleted)
+            product_category = product_to_be_deleted["product_category"]
+            print("PRODUCT CATEGORY:")
+            print(product_category)
             response = requests.delete(product_to_delete)
             if response.status_code == 204:
                 output_msg = "This product has been successfully removed from the system."
@@ -1123,7 +1133,7 @@ def merchant_deleteproduct(product_id):
         flash(output_msg)
 
     # Redirect back to the product list or the appropriate page
-    return redirect(url_for("merchant_viewproducts", category_id=1))
+    return redirect(url_for("merchant_viewproducts", category_id=product_category))
 
     
 #delete category
