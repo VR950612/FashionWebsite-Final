@@ -821,21 +821,22 @@ def merchant_addnewcategory():
  #edit/update product
 @app.route('/edit_product_category/<int:id>', methods=['GET', 'POST'])
 def edit_product_category(id):
-    product_category = id
+    product_category_id = id
     product_category={}
     print(request.method)
     if request.method == 'POST':
         # Handle form submission
         try:
+            print("???????")
             # Use request.form.get to retrieve submitted data
-            category_name = request.form.get('category_name', product_category['category_name'])
-            category_code = request.form.get('category_code', product_category['category_code'])
+            category_name = request.form.get('category_name')
+            category_code = request.form.get('category_code')
             print("DOES IT EVEN COME HERE")
             print(category_name)
             print(category_code)
 
             # Call the update function with the category ID and new data
-            if update_category(id, category_name, category_code):
+            if update_category(product_category_id, category_name, category_code):
                 print("SUccess post??")
                 flash('Category updated successfully!', 'success')
             else:
@@ -844,6 +845,7 @@ def edit_product_category(id):
 
         except Exception as e:
             print("exception post??")
+            print(e)
             flash(f'Error updating category: {str(e)}', 'error')
     else:
         print("SO IT GETS HERE AGAIN???")
@@ -884,8 +886,8 @@ def update_category(category_id, category_name, category_code):
         return False
 
 #Update a Product_Category
-@app.route('/product_category/<int:id>', methods=['POST'])
-def update_category(id):
+@app.route('/product_category_old/<int:id>', methods=['POST'])
+def update_category_old(id):
     # Fetch the current category details if needed (optional)
     product_category_code_response = f"{PRODUCT_CATEGORY_API_BASE_URL}/{id}"
     
