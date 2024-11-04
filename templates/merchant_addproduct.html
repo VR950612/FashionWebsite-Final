@@ -25,6 +25,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <style>
+      html,
+      body {
+        height: 170%; /* Ensure the html and body are full height */
+        margin: 0; /* Remove default margin */
+        background-color: #222; /* Full page background color */
+      }
       .nav {
         border-right: 1px solid white;
       }
@@ -80,186 +86,118 @@
     </nav>
 
     <div class="container-fluid">
-      <div class="row">
+    <div class="row">
         <!-- Side Navigation -->
         <div class="col-lg-2 col-md-3 col-sm-4 col-12 mt-5">
-          <ul class="nav flex-column">
-            <li class="nav-item">
-              <a
-                href="/merchant_addnewcategory"
-                class="nav-link text-white"
-                style="font-size: 17px"
-              >
-                <i class="fas fa-plus"></i> Add New Category
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                href="/admin_all_categories"
-                class="nav-link text-white"
-                style="font-size: 17px"
-              >
-                <i class="fas fa-list"></i> Display Categories
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link text-white" style="font-size: 17px">
-                <i class="fas fa-shopping-cart"></i> Orders
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link text-white" style="font-size: 17px">
-                <i class="fas fa-user"></i> My Account
-              </a>
-            </li>
-          </ul>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a href="/merchant_addnewcategory" class="nav-link text-white" style="font-size: 17px">
+                        <i class="fas fa-plus"></i> Add New Category
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin_all_categories" class="nav-link text-white" style="font-size: 17px">
+                        <i class="fas fa-list"></i> Display Categories
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link text-white" style="font-size: 17px">
+                        <i class="fas fa-shopping-cart"></i> Orders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link text-white" style="font-size: 17px">
+                        <i class="fas fa-user"></i> My Account
+                    </a>
+                </li>
+            </ul>
         </div>
 
-        <div class="container">
-          <form
-            action="/merchant_addproduct"
-            enctype="multipart/form-data"
-            method="POST"
-          >
+        <form action="{{ url_for('add_newproduct', product_category=1) }}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="product_category" value="{{ product_category }}" />
             <div class="text-white">
-              <h1>Add New Product</h1>
-              <div class="row" style="margin-top: 10px">
-                <div class="col-md-4 ms-3">
-                  <div class="form-group">
-                    <label for="product_name">Product Name</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="product_name"
-                      name="product_name"
-                      required
-                    />
-                  </div>
+                <div class="container">
+                    <div class="row" style="margin-top: 10px">
+                        <div class="col-md-12">
+                            <div class="text-white text-center" style="margin-bottom: 20px; margin-left: -10px">
+                                <h1>Add New Product</h1>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="product_category">Product Category</label>
+                                        <input type="text" class="form-control" id="product_category" name="product_category" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="product_name">Product Name</label>
+                                        <input type="text" class="form-control" id="product_name" name="product_name" maxlength="70" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="product_display_title">Product Display Title</label>
+                                        <input type="text" class="form-control" id="product_display_title" name="product_display_title" size="50" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group" style="margin-bottom: 20px">
+                                        <label for="product_description">Product Description</label>
+                                        <textarea class="form-control" id="product_description" name="product_description" rows="3" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="product_price">Product Price (NZD $)</label>
+                                        <input type="number" step="0.01" class="form-control" id="product_price" name="product_price" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="product_quantity">Product Quantity</label>
+                                        <input type="number" class="form-control" id="product_quantity" name="product_quantity"  required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="product_image">Product Image</label>
+                                        <input type="file" class="form-control-file" id="product_image" name="product_image" required />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary ms-3" style="margin-top: 30px">
+                                Add Product
+                            </button>
+                            <div style="margin-top: 30px">
+                                <a href="/merchant_viewproducts" class="btn btn-info" style="background-color: black; color: white">
+                                    Go to previous page
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-4 ms-3">
-                  <div class="form-group">
-                    <label for="product_code">Product Code</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="product_code"
-                      name="product_code"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-4 ms-3">
-                  <div class="form-group">
-                    <label for="product_display_title"
-                      >Product Display Title</label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="product_display_title"
-                      name="product_display_title"
-                      required
-                    />
-                  </div>
-                </div>
-                <div class="col-md-4 ms-3">
-                  <div class="form-group">
-                    <label for="product_description">Product Description</label>
-                    <textarea
-                      class="form-control"
-                      id="product_description"
-                      name="product_description"
-                      rows="2"
-                      required
-                    ></textarea>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-4 ms-3">
-                  <div class="form-group">
-                    <label for="product_price">Product Price (NZD $)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      class="form-control"
-                      id="product_price"
-                      name="product_price"
-                      required
-                    />
-                  </div>
-                </div>
-                <div class="col-md-4 ms-3">
-                  <div class="form-group">
-                    <label for="product_quantity">Product Quantity</label>
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="product_quantity"
-                      name="product_quantity"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-4 ms-3">
-                  <div class="form-group">
-                    <label for="product_image">Product Main Image</label>
-                    <input
-                      type="file"
-                      class="form-control-file"
-                      id="product_image"
-                      name="product_image"
-                      required
-                    />
-                  </div>
-                </div>
-                <div class="col-md-4 ms-3">
-                  <div class="form-group">
-                    <label for="product_secondary_image1"
-                      >Product Secondary Image 1</label
-                    >
-                    <input
-                      type="file"
-                      class="form-control-file"
-                      id="product_secondary_image1"
-                      name="product_secondary_image1"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="form-group ms-3">
-                <label for="product_secondary_image2"
-                  >Product Secondary Image 2</label
-                >
-                <input
-                  type="file"
-                  class="form-control-file"
-                  id="product_secondary_image2"
-                  name="product_secondary_image2"
-                />
-              </div>
-              <button type="submit" class="btn btn-primary ms-3">
-                Add Product
-              </button>
             </div>
-          </form>
-          <div>
-            <a
-              href="/merchant_viewproducts"
-              class="btn btn-info ms-3 mt-4"
-              style="background-color: black; color: white"
-              >Go to previous page</a
-            >
-          </div>
-        </div>
+        </form>
+    </div>
+</div>
+
+        <!-- Bootstrap JS -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
       </div>
     </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
   </body>
 </html>

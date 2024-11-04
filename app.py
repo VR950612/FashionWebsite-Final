@@ -818,38 +818,71 @@ def merchant_addnewcategory():
     return render_template('merchant_addnewcategory.html')  # Render your form template
 
 
-#Edit a Product_Category - allows us for a PUT request and update the Product_Category with the specified ID in the database
-@app.route('/product_category/<id>', methods=['GET', 'POST'])
-def edit_category(id):
-
+ #edit/update product
+@app.route('/edit_product_category/<int:id>', methods=['GET', 'POST'])
+def edit_product_category(id):
+    product_category = id
+    product_category={}
+    print(request.method)
     if request.method == 'POST':
-        # Get form data to update the product Category
-        category_name = request.form['category_name']
-        category_code = request.form['category_code']
-        
-        # Send PUT request to API Gateway to update the product category
-        response = requests.put(f'{PRODUCT_CATEGORY_API_BASE_URL}/{id}', json={
-            'category_name': category_name,
-            'category_code': category_code
-        })
-        
-        if response.status_code == 200:
-            flash('Product category updated successfully!', 'success')
-            return redirect(url_for('merchant_showcategories'))
-        else:
-            flash('Failed to update product category.', 'danger')
-            return redirect(url_for('edit_category', id=id))
- 
-    # GET request: Retrieve product category details to pre-fill the form
-    response = requests.get(f'{PRODUCT_CATEGORY_API_BASE_URL}/{id}')
-    
-    if response.status_code == 200:
-        categories = response.json()
-        return render_template('edit_category.html', categories=categories)
+        # Handle form submission
+        try:
+            # Use request.form.get to retrieve submitted data
+            category_name = request.form.get('category_name', product_category['category_name'])
+            category_code = request.form.get('category_code', product_category['category_code'])
+            print("DOES IT EVEN COME HERE")
+            print(category_name)
+            print(category_code)
+
+            # Call the update function with the category ID and new data
+            if update_category(id, category_name, category_code):
+                print("SUccess post??")
+                flash('Category updated successfully!', 'success')
+            else:
+                print("failed post??")
+                flash('Category update failed. Category not found.', 'error')
+
+        except Exception as e:
+            print("exception post??")
+            flash(f'Error updating category: {str(e)}', 'error')
     else:
-        flash('Error retrieving product category details.', 'danger')
-        return redirect(url_for('merchant_showcategories'))
+        print("SO IT GETS HERE AGAIN???")
+        try:
+            # Fetch the product category by ID
+            category_url = f"{PRODUCT_CATEGORY_API_BASE_URL}/product_category/{id}"
+            response = requests.get(category_url)
+
+            if response.status_code == 200:
+                product_category = response.json()  # Assuming this gives you the category object
+        except:
+            print("exception get??")
+            flash(f'Sorry category not found: {str(e)}', 'error')
+
+
+    return render_template("edit_category.html", product_category=product_category)
+
+
+def update_category(category_id, category_name, category_code):
+    print("DOES IT EVEN GET HERE???")
+    url = f"{PRODUCT_CATEGORY_API_BASE_URL}/product_category/{category_id}"
+    print(url)
     
+    # Create the updated category data
+    updated_data = {
+        "category_name": category_name,
+        "category_code": category_code
+    }
+
+    # Make a PUT request to update the category
+    response = requests.put(url, json=updated_data)
+
+    # Check if the update was successful
+    if response.status_code == 200:
+        return True
+    else:
+        print("Update failed:", response.status_code, response.text)  # Log error for debugging
+        return False
+
 #Update a Product_Category
 @app.route('/product_category/<int:id>', methods=['POST'])
 def update_category(id):
@@ -937,91 +970,80 @@ def merchant_viewproducts(category_id):
 
    
 #merchant admin add new product
-@app.route('/merchant_addproduct/<int:product_id>', methods=['POST'])
-def add_newproduc(product_id):
+@app.route('/add_product/<product_category>', methods=['POST'])
+def add_newproduct(product_category):
     name = session.get('name')
     password = session.get('password')
 
     if request.method == 'POST':
         # Retrieve form data
-        product_name = request.form['product_name']
         product_category = request.form['product_category']
+        product_name = request.form['product_name']
         product_display_title = request.form['product_display_title']
         product_description = request.form['product_description']
-        price = float(request.form['product_price'])
+        product_price = float(request.form['product_price'])
         product_quantity = int(request.form['product_quantity'])
+        product_image = request.files['product_image']
 
         # Initialize image paths
         image_paths = {}
 
         try:
-            # Save product images
+            # Save product image
             image_paths = save_product_images(
-                main_image=request.files['product_main_image'],
-                secondary_image1=request.files.get('product_secondary_image1'),
-                secondary_image2=request.files.get('product_secondary_image2'),
+                product_image=product_image,
                 upload_folder=app.config['PRODUCT_IMAGE_UPLOAD_FOLDER']
             )
         except Exception as e:
             flash(f'Error saving images: {str(e)}', 'error')
             return render_template('merchant_viewproducts.html', name=name, password=password)
 
-        # Construct product_data after saving images
+        # Generate a new product ID (this could be auto-incremented in a database)
+        # Here I'm assuming you have a function or method to generate a new product ID.
+        product_id = generate_new_product_id()  # Replace with your actual ID generation logic
+
+        # Construct product_data with product_category and product_id
         product_data = {
-            "product_name": product_name,
+            "product_id": product_id,  
             "product_category": product_category,
+            "product_name": product_name,
             "product_display_title": product_display_title,
             "product_description": product_description,
-            "product_price": price,
+            "product_price": product_price,
             "product_quantity": product_quantity,
-            "main_image": image_paths.get('main_image'),
-            "secondary_image1": image_paths.get('secondary_image1'),
-            "secondary_image2": image_paths.get('secondary_image2'),
-            "product_id": product_id  # Keep the product_id for reference
+            "product_image": image_paths.get('product_image')  # Get the saved image path
         }
 
-        # Update the URL to match your defined route (if necessary)
-        add_product_url = f"{PRODUCT_CATEGORY_API_BASE_URL}/merchant_addproduct/{product_id}"
+        # Code to save product_data to your database or API should follow here
+        add_product_url = f"{PRODUCT_CATEGORY_API_BASE_URL}/merchant_viewproducts?category_id={product_category}"
         add_product_response = requests.post(add_product_url, json=product_data)
 
-        if add_product_response.status_code == 201:
-            flash('Product added successfully!')
-        else:
-            flash('Failed to add product. Please try again.', 'error')
+        try:
+            if add_product_response.status_code == 201:
+                app.logger.info(f"Product added successfully: {product_data}")
+                return redirect(url_for('merchant_viewproducts', product_category=product_category))
+            else:
+                app.logger.error(f"Failed to add product: {add_product_response.content}")
+                flash('Failed to add product. Please try again.', 'error')
+        except Exception as e:
+            app.logger.error(f"An error occurred: {e}")
+            flash('An error occurred. Please try again.', 'error')
 
-    return render_template('merchant_viewproducts.html', name=name, password=password)
+    return redirect(url_for("merchant_viewproducts", product_category=product_category))
 
+def generate_new_product_id():
+    pass
 
-def save_product_images(main_image, secondary_image1=None, secondary_image2=None, upload_folder=None):
+def save_product_images(product_image, upload_folder):
     image_paths = {}
 
-    if main_image and allowed_file(main_image.filename):
-        main_image_path = save_file(main_image, upload_folder)
-        image_paths['main_image'] = main_image_path
-
-    if secondary_image1 and allowed_file(secondary_image1.filename):
-        secondary_image1_path = save_file(secondary_image1, upload_folder)
-        image_paths['secondary_image1'] = secondary_image1_path
-
-    if secondary_image2 and allowed_file(secondary_image2.filename):
-        secondary_image2_path = save_file(secondary_image2, upload_folder)
-        image_paths['secondary_image2'] = secondary_image2_path
+    if product_image:
+        # Save product image
+        product_image_path = os.path.join(upload_folder, secure_filename(product_image.filename))
+        product_image.save(product_image_path)
+        image_paths['product_image'] = product_image_path
 
     return image_paths
-
-def save_file(file, upload_folder):
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        dt_now = dt.now().strftime("%Y%m%d%H%M%S%f")
-        filename_to_save = f"{dt_now}_{filename}"
-        file_path = os.path.join(upload_folder, filename_to_save)
-        file.save(file_path)
-        return file_path
-    return None
-
-def allowed_file(filename):
-    allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}  # Adjust as needed
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 # @app.route('/merchant_category')
 # def merchant_category():
@@ -1030,7 +1052,7 @@ def allowed_file(filename):
 #edit/update product
 @app.route('/edit_product/<int:product_id>', methods=['GET', 'POST'])
 def edit_product(product_id):
-    product_category_id = "1"  # Or fetch dynamically if needed
+    product_category_id = product_id  # Or fetch dynamically if needed
     url = f"{PRODUCT_CATEGORY_API_BASE_URL}/product/{product_id}"
     
     response = requests.get(url)

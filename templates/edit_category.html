@@ -134,7 +134,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                  <a href="/merchant_showcategories" class="nav-link text-white" style="font-size: 17px;">
+                  <a href="/admin_all_categories" class="nav-link text-white" style="font-size: 17px;">
                       <i class="fas fa-list"></i> Display Categories
                   </a>
               </li>
@@ -151,8 +151,9 @@
             </ul>
         </div>
 <div class="container" >
-    <form id="update-category-form">
+    <form id="update-category-form" action="/edit_product_category/{{product_category.id}}" method="post">
         <h1>Edit Category</h1>
+        {{product_category}}
         <div class="row" style="margin-top:30px;">
             <div class="col-md-6">
                 <div class="form-group">
@@ -167,11 +168,10 @@
                 </div>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Update Category</button>
+          <button type="submit">Update Category</button>
+  
         </form>
         </div>
-
-
 
         <script>
           $(document).ready(function() {
@@ -180,12 +180,12 @@
                   var formData = $(this).serialize(); 
                   
                   $.ajax({
-                      url: 'update_category/{{ id }}',  
+                      url: '/edit_product_category/{{product_category.id}}',  // Ensure this points to the right route
                       type: 'POST', 
                       data: formData, 
                       success: function(response) {
                           alert('Category updated successfully!');
-                          window.location.href = "/categories";  // Redirect to the categories page
+                          window.location.href = '/admin_all_categories'; 
                       },
                       error: function(xhr, status, error) {
                           alert('Error updating category: ' + error);
