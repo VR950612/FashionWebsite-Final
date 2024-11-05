@@ -769,20 +769,64 @@ def categories():
 #merchant admin add new category
 @app.route('/merchant_addnewcategory', methods=['GET', 'POST'])
 def merchant_addnewcategory():
+    success = False
+    output_message = ""
     if request.method == 'POST':
-        category_name = request.form.get('PRODUCT_CATEGORY_API_BASE_URL')
-        category_code = request.form.get('PRODUCT_CATEGORY_API_BASE_URL')
+        category_name = request.form['category_name']
+        category_code = request.form['category_code']
 
-        if category_name and category_code:
-            # Here, you would typically save to your database
-            product.append({'name': category_name, 'code': category_code})
-            flash('Category added successfully!', 'success')
-            return redirect(url_for('merchant_showcategories'))
-        else:
-            flash('Please provide both category name and code.', 'danger')
+        PRODUCT_CATEGORY_CODE_URL = PRODUCT_CATEGORY_API_BASE_URL + "/product_category"
+        print(PRODUCT_CATEGORY_CODE_URL)
 
-    return render_template('merchant_addnewcategory.html')  # Render your form template
+        # Make the GET request to check if the category code exists
+        # product_category_code_response = requests.post(PRODUCT_CATEGORY_CODE_URL)
 
+        # Put this and store it in the post data variable
+        received_product_category_post_data = {
+            "category_name": category_name,
+            "category_code":category_code,
+            "products": []
+        }        
+        headers = {
+            'Content-type':'application/json', 
+            'Accept':'application/json'
+        }
+        print(received_product_category_post_data)
+
+        product_category_code_response = requests.post(
+            url= PRODUCT_CATEGORY_CODE_URL,
+            headers=headers, 
+            json=received_product_category_post_data
+        )        
+
+        try:
+            response_data = json.loads(product_category_code_response.text)
+            # Check if the response is successful
+            if product_category_code_response.status_code == 201:
+                print("status code is 201")
+                output_message = response_data['message']
+                success = True
+                # return jsonify({'output_msg': output_message, 'success': success})
+            elif product_category_code_response.status_code == 200:
+                print("Status code is 200")
+                print(product_category_code_response.status_code)
+                print(response_data)
+                output_message = response_data['message']
+                # return jsonify({'output_msg': output_message, 'success': success})                
+            else:
+                print("Status code is neither 200 nor 201")
+                print(product_category_code_response.status_code)
+                output_message = "Sorry something went wrong while adding this product category. Check if the category code already exists or try again later."
+                # return jsonify({'output_msg': output_message, 'success': success})
+        except Exception as e:
+            print("Exception occured while adding product category")
+            print(str(e))
+            output_message="Whoops something unexpected happended while adding this product category. Please try again after a while."
+        return jsonify({'message': output_message, 'success': success})
+
+    else:
+        # Render the template for the form
+        return render_template('merchant_addnewcategory.html')
 
  #edit/update product
 @app.route('/edit_product_category/<int:id>', methods=['GET', 'POST'])
@@ -1175,8 +1219,8 @@ def shopping_cart():
 # def merchant_nav():
 #     return render_template("merchant_nav.html")
 
-@app.route('/search', methods=['GET'])
-def search():
+@app.route('/searchdata', methods=['GET'])
+def searchdata():
     # Get the search term from the query string (the 'search_word' parameter)
     search_word = request.args.get('search_word', '')  # Default to empty string if not provided
     print(f"Search word: {search_word}")
@@ -1228,43 +1272,17 @@ def search():
         return render_template("search_results.html", error="Something went wrong.")
 
 
-# Default route to render an empty or initial page
-@app.route('/')
-def home():
-    return render_template('index.html')  # Assuming you have a home page
+@app.route('/user_cart')
+def user_cart():
+    return render_template("user_cart.html")
 
-# @app.route('/search', methods=['GET'])
-# def search():
-#     RANDOM_PRODUCTS_URL = PRODUCT_CATEGORY_API_BASE_URL + "random-product-set"
-#     headers = {
-#             'Content-type': 'application/json',
-#             'Accept': 'application/json'
-#     }
-#     if request.method == 'POST':
-#         try:
-#             search_word = request.form.get('search_word')
-#             print(f"Search word: {search_word}")  
+@app.route('/user_home')
+def user_home():
+    return render_template("user_home.html")
 
-#             # Make API requests
-#             random_products_response_one = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
-#             random_products_response_two = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
-
-#             # Check if API requests were successful
-#             if random_products_response_one.status_code == 200 and random_products_response_two.status_code == 200:
-#                 random_products_response_one_data = json.loads(random_products_response_one.text)
-#                 random_products_response_two_data = json.loads(random_products_response_two.text)
-
-#                 return render_template("search_results.html",
-#                                        random_products_one=random_products_response_one_data,
-#                                        random_products_two=random_products_response_two_data)
-#             else:
-#                 print("API request failed with status codes", random_products_response_one.status_code, random_products_response_two.status_code)
-#                 return render_template("search_results.html", error="API request failed.")
-#         except Exception as e:
-#             print(f"An error occurred: {e}")
-#             return render_template("search_results.html", error="No products found!")
-    
-#     return render_template("search_results.html")
+@app.route('/user_nav')
+def user_nav():
+    return render_template("user_nav.html")
 
 
 if __name__ == "__main__":

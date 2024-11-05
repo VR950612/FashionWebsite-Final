@@ -67,7 +67,6 @@
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!------ Include the above in your HEAD tag ---------->
 
@@ -128,7 +127,7 @@
             <div class="col-lg-8 col-md-7 col-sm-6 col-12 pt-3 mt-5 d-flex justify-content-center align-items-start">
               <div class="form-container text-white">
                   <h1>Add New Category</h1>
-                  <form id="productForm" method="POST" action="/admin_all_categories" enctype="multipart/form-data">
+                  <form id="addCategoryForm" method="post">
                       <div class="form-fields">
                           <div class="mb-3">
                               <input type="text" id="category_name" class="form-control" name="category_name" placeholder="Category Name" required>
@@ -136,15 +135,44 @@
                           <div class="mb-3">
                               <input type="text" id="category_code" class="form-control" name="category_code" placeholder="Category Code" required>
                           </div>
-                          <a href="admin_all_categories" class="btn btn-info">Add Category</a>
+                          <button type="submit" class="btn btn-info">Add Category</button>
                       </div>
                     </form>
+                    <span id="add-category-msg"></span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+      $(document).ready(function() {
+          $('#addCategoryForm').submit(function(e) {
+              console.log("here???")
+              e.preventDefault();
+              console.log("here again???")
+              var formData = $(this).serialize(); 
+              
+              $.ajax({
+                  url: '/merchant_addnewcategory',  // Ensure this points to the right route
+                  type: 'POST', 
+                  data: formData,
+
+                  success: function(response) {
+                      if (response.success) {
+                          $('#add-category-msg').text(response.message).removeClass('text-error-msg').addClass('text-success-msg');
+                          window.location.href = '/admin_all_categories';
+                      } else {
+                          $('#add-category-msg').text(response.message).removeClass('text-success-msg').addClass('text-error-msg');
+                      }
+                  },
+                  error: function(xhr, status, error) {
+                      $('#add-category-msg').text("Error: " + xhr.responseJSON.message).removeClass('text-success-msg').addClass('text-error-msg');
+                  }
+                   
+              });
+          });
+      });
+  </script>    
 </body>
 </html>
