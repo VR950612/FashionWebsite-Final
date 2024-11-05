@@ -568,40 +568,6 @@ def merchant_logout():
     flash("You have been logged out.", "info")
     return redirect(url_for('merchant_login'))
 
-# @app.route("/searchdata", methods=["POST", "GET"])
-# def searchdata():
-#     RANDOM_PRODUCTS_URL = PRODUCT_CATEGORY_API_BASE_URL + "random-product-set"
-#     headers = {
-#         'Content-type': 'application/json',
-#         'Accept': 'application/json'
-#     }
-
-#     if request.method == 'POST':
-#         try:
-#             search_word = request.form.get('search_word')
-#             print(f"Search word: {search_word}")  
-
-#             # Make API requests
-#             random_products_response_one = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
-#             random_products_response_two = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
-
-#             # Check if API requests were successful
-#             if random_products_response_one.status_code == 200 and random_products_response_two.status_code == 200:
-#                 random_products_response_one_data = json.loads(random_products_response_one.text)
-#                 random_products_response_two_data = json.loads(random_products_response_two.text)
-
-#                 return render_template("results.html",
-#                                        random_products_one=random_products_response_one_data,
-#                                        random_products_two=random_products_response_two_data)
-#             else:
-#                 print("API request failed with status codes", random_products_response_one.status_code, random_products_response_two.status_code)
-#                 return render_template("results.html", error="API request failed.")
-#         except Exception as e:
-#             print(f"An error occurred: {e}")
-#             return render_template("results.html", error="No products found!")
-    
-#     return render_template("results.html")
-
 #Single product details
 @app.route('/product/<int:product_id>')
 def single_product(product_id):
@@ -1211,36 +1177,94 @@ def shopping_cart():
 
 @app.route('/search', methods=['GET'])
 def search():
-    RANDOM_PRODUCTS_URL = PRODUCT_CATEGORY_API_BASE_URL + "random-product-set"
-    headers = {
-            'Content-type': 'application/json',
-            'Accept': 'application/json'
-    }
-    if request.method == 'POST':
-        try:
-            search_word = request.form.get('search_word')
-            print(f"Search word: {search_word}")  
-
-            # Make API requests
-            random_products_response_one = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
-            random_products_response_two = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
-
-            # Check if API requests were successful
-            if random_products_response_one.status_code == 200 and random_products_response_two.status_code == 200:
-                random_products_response_one_data = json.loads(random_products_response_one.text)
-                random_products_response_two_data = json.loads(random_products_response_two.text)
-
-                return render_template("search_results.html",
-                                       random_products_one=random_products_response_one_data,
-                                       random_products_two=random_products_response_two_data)
-            else:
-                print("API request failed with status codes", random_products_response_one.status_code, random_products_response_two.status_code)
-                return render_template("search_results.html", error="API request failed.")
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            return render_template("search_results.html", error="No products found!")
+    # Get the search term from the query string (the 'search_word' parameter)
+    search_word = request.args.get('search_word', '')  # Default to empty string if not provided
+    print(f"Search word: {search_word}")
     
-    return render_template("search_results.html")
+    # Construct the API URL based on the search term
+    RANDOM_PRODUCTS_URL = PRODUCT_CATEGORY_API_BASE_URL + "random-product-set"
+    
+    # Add the search_word parameter to the URL if it's provided
+    if search_word:
+        RANDOM_PRODUCTS_URL += f"?category_name={search_word}"
+
+    headers = {
+        'Content-type': 'application/json',
+        'Accept': 'application/json'
+    }
+
+    try:
+        # Make the API requests with the updated URL
+        random_products_response_one = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
+        random_products_response_two = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
+
+        # Check if API requests were successful
+        if random_products_response_one.status_code == 200 and random_products_response_two.status_code == 200:
+            # Parse the JSON response from the API
+            random_products_response_one_data = random_products_response_one.json()
+            random_products_response_two_data = random_products_response_two.json()
+
+            # Check if both API responses have no products
+            if not random_products_response_one_data and not random_products_response_two_data:
+                return render_template("search_results.html", error="No products found matching your search criteria.")
+            
+            # Render the template with the fetched data
+            return render_template("search_results.html",
+                                   random_products_one=random_products_response_one_data,
+                                   random_products_two=random_products_response_two_data)
+
+        else:
+            print("API request failed with status codes", random_products_response_one.status_code, random_products_response_two.status_code)
+            return render_template("search_results.html", error="API request failed.")
+    
+    except requests.exceptions.RequestException as e:
+        # Handle network-related errors
+        print(f"Request failed: {e}")
+        return render_template("search_results.html", error="API request failed.")
+    
+    except Exception as e:
+        # Handle any other unexpected errors
+        print(f"An error occurred: {e}")
+        return render_template("search_results.html", error="Something went wrong.")
+
+
+# Default route to render an empty or initial page
+@app.route('/')
+def home():
+    return render_template('index.html')  # Assuming you have a home page
+
+# @app.route('/search', methods=['GET'])
+# def search():
+#     RANDOM_PRODUCTS_URL = PRODUCT_CATEGORY_API_BASE_URL + "random-product-set"
+#     headers = {
+#             'Content-type': 'application/json',
+#             'Accept': 'application/json'
+#     }
+#     if request.method == 'POST':
+#         try:
+#             search_word = request.form.get('search_word')
+#             print(f"Search word: {search_word}")  
+
+#             # Make API requests
+#             random_products_response_one = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
+#             random_products_response_two = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
+
+#             # Check if API requests were successful
+#             if random_products_response_one.status_code == 200 and random_products_response_two.status_code == 200:
+#                 random_products_response_one_data = json.loads(random_products_response_one.text)
+#                 random_products_response_two_data = json.loads(random_products_response_two.text)
+
+#                 return render_template("search_results.html",
+#                                        random_products_one=random_products_response_one_data,
+#                                        random_products_two=random_products_response_two_data)
+#             else:
+#                 print("API request failed with status codes", random_products_response_one.status_code, random_products_response_two.status_code)
+#                 return render_template("search_results.html", error="API request failed.")
+#         except Exception as e:
+#             print(f"An error occurred: {e}")
+#             return render_template("search_results.html", error="No products found!")
+    
+#     return render_template("search_results.html")
 
 
 if __name__ == "__main__":
