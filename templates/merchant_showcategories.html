@@ -156,12 +156,13 @@
                                 <td style="text-align: left; padding-left: 20px;">{{ product_category.category_code }}</td>
                                 <td style="display: flex; justify-content: space-between; align-items: center;">
                                   <a href="/edit_product_category/{{ product_category.id }}" class="btn btn-warning btn-sm">Edit</a>
-                                  <form action="" method="POST" style="display: inline;">
-                                      <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                  </form>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm" onclick="document.getElementById('delete_modal_{{product_category.id}}').style.display='block'">Delete</button>
+                                    
                               </td>
+                              {% include 'delete_category_modal.html' %}
                                  <td style="text-align: center; padding-left: 10px;"><a href="/merchant_viewproducts/{{product_category.id}}"  class="btn btn-info">View Products</a>
-                                    {% include 'delete_model.html' %}
                                 </td>
                             </tr>
                         {% endfor %}

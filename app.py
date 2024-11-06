@@ -920,30 +920,36 @@ def update_category_old(id):
 
     return redirect(url_for('categories'))
 
-
-#delete product category
-@app.route('/delete-productcategory/<int:id>/', methods=['POST'])
-def delete_productcategory(id):
-    output_msg = ""
-    success = False
+#delete category
+@app.route('/delete-category/<int:category_id>', methods=['POST'])
+def delete_category(category_id):
+    product_category_id = category_id
+    # External API URL for deleting products by category
+    PRODUCT_CATEGORY_URL = PRODUCT_CATEGORY_API_BASE_URL +'/product_category/' + str(category_id)
 
     try:
-        # Check if the product to delete exists in the database
-        product_to_delete = PRODUCT_CATEGORY_API_BASE_URL
-        
-        if not product_to_delete:
-            output_msg = "Sorry, this product no longer exists in our system. Please reload the page."
+        # Send the DELETE request to the external API
+        response = requests.delete(PRODUCT_CATEGORY_URL)
+
+        # Check if the response status code is 200 (successful)
+        if response.status_code == 200:
+            return jsonify({
+                'success': True,
+                'message': 'Category deleted successfully'
+            })
         else:
-            # Delete the product from the database
-            db.session.delete(product_to_delete)
-            db.session.commit()
-            success = True
-            output_msg = "This product has been successfully removed from the system"
-    except Exception as e:
-        output_msg = f"An error occurred while deleting the product: {str(e)}"
+            # If the status code is not 200, return an error message
+            return jsonify({
+                'success': False,
+                'message': f'Failed to delete category. Status code: {response.status_code}'
+            }), 400
 
-    return jsonify({'output_msg': output_msg, 'success': success})
-
+    except requests.exceptions.RequestException as e:
+        # Handle network-related errors (e.g., connection problems, timeouts)
+        return jsonify({
+            'success': False,
+            'message': f'Error occurred while trying to delete the category: {e}'
+        }), 500
 
 # #merchant admin view all products
 @app.route('/merchant_viewproducts/<int:category_id>', methods=['GET'])
@@ -1169,43 +1175,7 @@ def merchant_deleteproduct(product_id):
     # Redirect back to the product list or the appropriate page
     return redirect(url_for("merchant_viewproducts", category_id=product_category))
 
-    
-#delete category
-@app.route('/delete-category/<int:category_id>', methods=['DELETE'])
-def delete_category(category_id):
-    product_category_id = category_id
-    PRODUCT_CATEGORY_URL = PRODUCT_CATEGORY_API_BASE_URL + "product-by-category/" + str(product_category_id)
-    headers = {
-        'Content-type':'application/json', 
-        'Accept':'application/json'
-    }
-
-    products_by_category_response = requests.delete(
-        url= PRODUCT_CATEGORY_URL,
-        headers=headers
-    )
-    print(products_by_category_response)
-    print(products_by_category_response.status_code)
-
-    try:
-        if products_by_category_response.status_code == 200:
-            # This response message must get passed to the front end 
-            products_by_category_response_data = json.loads(products_by_category_response.text)
-
-            print(products_by_category_response_data)
-            print(type(products_by_category_response_data))
-
-            print("CHECK 1")
-
-            print("CHECK2")      
-            return render_template("merchant_viewproducts.html", products=products_by_category_response_data)
-        else:
-            return render_template("merchant_viewproducts.html", products=None)
-    except:
-        print("Sorry, this product no longer exists in our system. Please reload the page!.")
-        return render_template("merchant_viewproducts.html", products=None)
-
-  
+     
 @app.route('/merchant_addproduct')
 def merchant_addproduct():
     return render_template("merchant_addproduct.html")
@@ -1270,6 +1240,7 @@ def searchdata():
         # Handle any other unexpected errors
         print(f"An error occurred: {e}")
         return render_template("search_results.html", error="Something went wrong.")
+
 
 
 @app.route('/user_cart')
