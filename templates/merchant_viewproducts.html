@@ -206,7 +206,7 @@
                                 <a href="/edit_product/{{product.id}}" class="btn btn-warning btn-sm h-100">Edit</a>
                             </td>
                             <td>
-                                <button class="btn btn-danger btn-sm h-100" onclick="deleteProduct({{ product.id }})">Delete</button>
+                              <button class="btn btn-danger btn-sm" onclick="document.getElementById('delete_product_modal_{{ product.id }}').style.display='block'">Delete</button>
                             </td>
                               <td> 
                                   {% if product.product_image %}
@@ -217,6 +217,7 @@
                                       <p>No image available</p>
                                   {% endif %}
                               </td>
+                              {% include 'delete_product_modal.html' %}
                             </tr>
                       {% endfor %}
                     {% endif %}                    
@@ -227,6 +228,7 @@
           </div>
         </div>   
       </div>
+      <!--
       <script>
         function deleteProduct(productId) {
             if (confirm('Are you sure you want to delete this product?')) {
@@ -252,5 +254,6 @@
             }
         }
         </script>
+        -->
           
         

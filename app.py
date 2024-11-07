@@ -1146,14 +1146,17 @@ def update_product(product_id, product_name, product_category, product_display_t
 
 
 # Delete product
-@app.route('/delete_product/<int:product_id>', methods=['DELETE'])
+@app.route('/delete-product/<int:product_id>', methods=['POST'])
 def delete_product(product_id):
     # Construct the URL for deleting the product
     url = f"{PRODUCT_CATEGORY_API_BASE_URL}/product/{product_id}"
+    print(url)
 
     try:
         # Send the DELETE request to the external API
         response = requests.delete(url)
+        print(response)
+        print(response.status_code)
 
         # Check if the response status code is 200 or 204 (successful deletion)
         if response.status_code in [200, 204]:

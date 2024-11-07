@@ -40,7 +40,10 @@
       </div>
     </div>
   </form>
-  <div class="delete-category-msg" id="delete-category-msg"></div>
+  <div
+    class="delete-category-msg-{{ product_category.id }}"
+    id="delete-category-msg"
+  ></div>
 </div>
 
 <script>
@@ -74,20 +77,20 @@
 
           success: function (response) {
             if (response.success) {
-              $("#delete-category-msg")
+              $("#delete-category-msg-{{ product_category.id }}")
                 .text(response.message)
                 .removeClass("text-error-msg")
                 .addClass("text-success-msg");
               window.location.href = "/admin_all_categories";
             } else {
-              $("#delete-category-msg")
+              $("#delete-category-msg-{{ product_category.id }}")
                 .text(response.message)
                 .removeClass("text-success-msg")
                 .addClass("text-error-msg");
             }
           },
           error: function (xhr, status, error) {
-            $("#delete-category-msg")
+            $("#delete-category-msg-{{ product_category.id }}")
               .text("Error: " + xhr.responseJSON.message)
               .removeClass("text-success-msg")
               .addClass("text-error-msg");
