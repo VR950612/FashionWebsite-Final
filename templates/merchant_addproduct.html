@@ -86,118 +86,160 @@
     </nav>
 
     <div class="container-fluid">
-    <div class="row">
+      <div class="row">
         <!-- Side Navigation -->
         <div class="col-lg-2 col-md-3 col-sm-4 col-12 mt-5">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a href="/merchant_addnewcategory" class="nav-link text-white" style="font-size: 17px">
-                        <i class="fas fa-plus"></i> Add New Category
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/admin_all_categories" class="nav-link text-white" style="font-size: 17px">
-                        <i class="fas fa-list"></i> Display Categories
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link text-white" style="font-size: 17px">
-                        <i class="fas fa-shopping-cart"></i> Orders
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link text-white" style="font-size: 17px">
-                        <i class="fas fa-user"></i> My Account
-                    </a>
-                </li>
-            </ul>
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a
+                href="/merchant_addnewcategory"
+                class="nav-link text-white"
+                style="font-size: 17px"
+              >
+                <i class="fas fa-plus"></i> Add New Category
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                href="/admin_all_categories"
+                class="nav-link text-white"
+                style="font-size: 17px"
+              >
+                <i class="fas fa-list"></i> Display Categories
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link text-white" style="font-size: 17px">
+                <i class="fas fa-shopping-cart"></i> Orders
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link text-white" style="font-size: 17px">
+                <i class="fas fa-user"></i> My Account
+              </a>
+            </li>
+          </ul>
         </div>
 
-        <form action="{{ url_for('add_newproduct', product_category=1) }}" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="product_category" value="{{ product_category }}" />
-            <div class="text-white">
-                <div class="container">
-                    <div class="row" style="margin-top: 10px">
-                        <div class="col-md-12">
-                            <div class="text-white text-center" style="margin-bottom: 20px; margin-left: -10px">
-                                <h1>Add New Product</h1>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="product_category">Product Category</label>
-                                        <input type="text" class="form-control" id="product_category" name="product_category" required />
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="product_name">Product Name</label>
-                                        <input type="text" class="form-control" id="product_name" name="product_name" maxlength="70" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="product_display_title">Product Display Title</label>
-                                        <input type="text" class="form-control" id="product_display_title" name="product_display_title" size="50" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group" style="margin-bottom: 20px">
-                                        <label for="product_description">Product Description</label>
-                                        <textarea class="form-control" id="product_description" name="product_description" rows="3" required></textarea>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="product_price">Product Price (NZD $)</label>
-                                        <input type="number" step="0.01" class="form-control" id="product_price" name="product_price" required />
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="product_quantity">Product Quantity</label>
-                                        <input type="number" class="form-control" id="product_quantity" name="product_quantity"  required>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="product_image">Product Image</label>
-                                        <input type="file" class="form-control-file" id="product_image" name="product_image" required />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary ms-3" style="margin-top: 30px">
-                                Add Product
-                            </button>
-                            <div style="margin-top: 30px">
-                                <a href="/merchant_viewproducts" class="btn btn-info" style="background-color: black; color: white">
-                                    Go to previous page
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <form id="addProductForm" method="post">
+          <div class="form-group">
+            <label for="product_category">Product Category</label>
+            <input
+              type="text"
+              class="form-control"
+              id="product_category"
+              name="product_category"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="product_name">Product Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="product_name"
+              name="product_name"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="product_display_title">Product Display Title</label>
+            <input
+              type="text"
+              class="form-control"
+              id="product_display_title"
+              name="product_display_title"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="product_description">Product Description</label>
+            <textarea
+              class="form-control"
+              id="product_description"
+              name="product_description"
+              required
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="product_price">Product Price (NZD $)</label>
+            <input
+              type="number"
+              step="0.01"
+              class="form-control"
+              id="product_price"
+              name="product_price"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="product_quantity">Product Quantity</label>
+            <input
+              type="number"
+              class="form-control"
+              id="product_quantity"
+              name="product_quantity"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="product_image">Product Image</label>
+            <input
+              type="file"
+              class="form-control-file"
+              id="product_image"
+              name="product_image"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">Add Product</button>
         </form>
-    </div>
-</div>
-
-        <!-- Bootstrap JS -->
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+        <span id="add-product-msg"></span>
       </div>
     </div>
+    <script>
+      $(document).ready(function () {
+        $("#addProductForm").submit(function (e) {
+          console.log("here???");
+          e.preventDefault(); // Prevent form from submitting normally
+          console.log("here again???");
+          var formData = $(this).serialize();
+
+          $.ajax({
+            url: "/merchant_addproduct", // Ensure this points to the correct URL
+            type: "POST",
+            data: formData,
+            success: function (response) {
+              // Log the response to check its content
+              console.log(response);
+
+              if (response.success) {
+                // If the product is successfully added, show the success message
+                $("#add-product-msg")
+                  .text(response.message)
+                  .removeClass("text-error-msg")
+                  .addClass("text-success-msg");
+
+                // Redirect to the view products page
+                window.location.href = "/merchant_viewproducts";
+              } else {
+                // If there was an error, show the error message
+                $("#add-product-msg")
+                  .text(response.message)
+                  .removeClass("text-success-msg")
+                  .addClass("text-error-msg");
+              }
+            },
+            error: function (xhr, status, error) {
+              // Handle AJAX request errors
+              console.log("AJAX error:", error);
+              $("#add-product-msg")
+                .text("Error: " + xhr.responseJSON.message)
+                .removeClass("text-success-msg")
+                .addClass("text-error-msg");
+            },
+          });
+        });
+      });
+    </script>
   </body>
 </html>

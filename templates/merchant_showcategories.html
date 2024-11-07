@@ -102,6 +102,9 @@
       margin-left: 60px; /* Push to the right */
       margin-right: opx; /* Remove right margin */
   }
+  btn-margin {
+    margin-top: 10px;
+}
 </style>
 </head>
 <body>
@@ -134,13 +137,13 @@
         </div>
         <div class="col-lg-9 col-md-9 col-sm-9 col-9 ms-5"> 
             <div class="table-responsive">
-                <h1 class="text-center text-white" style="margin-bottom: 40px;">All Category</h1> 
+                <h1 class="text-center text-white" style="margin-bottom: 40px;">All Categories</h1> 
                 <table class="table table-striped mt-3 table-custom"> 
                     <thead class="bg-light">
                       <tr>
                         <th>ID</th>
                         <th style="text-align: left; padding-left: 20px;">Category Name</th>
-                        <th style="text-align: leftt; padding-left: 0px;">Category Code</th>
+                        <th style="text-align: left; padding-left: 0px;">Category Code</th>
                         <th style="text-align: right; padding-right: 60px;">Edit</th>
                         <th style="text-align: right; padding-right: 30px;">Delete</th>
                         <th style="text-align: right; padding-right: 80px;">View Products List</th>
@@ -159,11 +162,11 @@
                                 </td>
                                 <td>
                                     <button class="btn btn-danger btn-sm" onclick="document.getElementById('delete_modal_{{product_category.id}}').style.display='block'">Delete</button>
-                                    
-                              </td>
-                              {% include 'delete_category_modal.html' %}
-                                 <td style="text-align: center; padding-left: 10px;"><a href="/merchant_viewproducts/{{product_category.id}}"  class="btn btn-info">View Products</a>
                                 </td>
+                              {% include 'delete_category_modal.html' %}
+                                 <td style="text-align: center; padding-left: 10px;">
+                                     <a href="/merchant_viewproducts/{{product_category.id}}" class="btn btn-info">View Products</a>
+                                 </td>
                             </tr>
                         {% endfor %}
                     {% endif %}
@@ -171,11 +174,20 @@
                </table>
               </table>
             </div>
-            <div>
-                <a href="javascript:history.back()" class="btn btn-info" style="background-color:black; color:white; margin-bottom: 10px; margin-top: 40px;">Go to previous page</a>
+            
+            <!-- Add New Category Button Link -->
+            <div class="btn-margin">
+                <a href="/merchant_addnewcategory" class="btn btn-success">
+                    Add New Category
+                </a>
+            </div>
+
+            <!-- Go to Previous Page Link -->
+            <div style="margin-top: 30px">
+                <a href="javascript:history.back()" class="btn btn-info" style="background-color:black; color:white; margin-bottom: 10px;">Go to previous page</a>
             </div>
         </div>   
     </div>
   </div>
-</body> 
+</body>
             

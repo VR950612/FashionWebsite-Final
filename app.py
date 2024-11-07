@@ -988,75 +988,84 @@ def merchant_viewproducts(category_id):
 
    
 #merchant admin add new product
-@app.route('/add_product/<product_category>', methods=['POST'])
-def add_newproduct(product_category):
-    name = session.get('name')
-    password = session.get('password')
+@app.route('/merchant_addproduct', methods=['GET', 'POST'])
+def merchant_addproduct():
+    success = False
+    output_message = ""
 
     if request.method == 'POST':
-        # Retrieve form data
-        product_category = request.form['product_category']
-        product_name = request.form['product_name']
-        product_display_title = request.form['product_display_title']
-        product_description = request.form['product_description']
-        product_price = float(request.form['product_price'])
-        product_quantity = int(request.form['product_quantity'])
-        product_image = request.files['product_image']
-
-        # Initialize image paths
-        image_paths = {}
-
-        try:
-            # Save product image
-            image_paths = save_product_images(
-                product_image=product_image,
-                upload_folder=app.config['PRODUCT_IMAGE_UPLOAD_FOLDER']
-            )
-        except Exception as e:
-            flash(f'Error saving images: {str(e)}', 'error')
-            return render_template('merchant_viewproducts.html', name=name, password=password)
-
-        # Generate a new product ID (this could be auto-incremented in a database)
-        # Here I'm assuming you have a function or method to generate a new product ID.
-        product_id = generate_new_product_id()  # Replace with your actual ID generation logic
-
-        # Construct product_data with product_category and product_id
-        product_data = {
-            "product_id": product_id,  
-            "product_category": product_category,
+        # Handle the POST request (product addition logic)
+        product_name = request.form.get('product_name', '')
+        product_category = request.form.get('product_category', '')
+        product_display_title = request.form.get('product_display_title', '')
+        product_description = request.form.get('product_description', '')
+        product_price = float(request.form.get('product_price', 0))
+        product_quantity = int(request.form.get('product_quantity', 0))
+        discount_percentage = float(request.form.get('discount_percentage', 0))  # Default to 0 if not provided
+        discounted_price = float(request.form.get('discounted_price', 0)) 
+      
+        received_product_post_data = {
             "product_name": product_name,
+            "product_category": product_category,
             "product_display_title": product_display_title,
             "product_description": product_description,
             "product_price": product_price,
             "product_quantity": product_quantity,
-            "product_image": image_paths.get('product_image')  # Get the saved image path
+            "discount_percentage" : discount_percentage,
+            "discounted_price" : discounted_price,
+            }
+
+        headers = {
+            'Content-type': 'application/json', 
+            'Accept': 'application/json'
         }
 
-        # Code to save product_data to your database or API should follow here
-        add_product_url = f"{PRODUCT_CATEGORY_API_BASE_URL}/merchant_viewproducts?category_id={product_category}"
-        add_product_response = requests.post(add_product_url, json=product_data)
-
+        # If you need to make a request to check or create the product category:
+        product_url = f"{PRODUCT_CATEGORY_API_BASE_URL}/product"
+        
         try:
-            if add_product_response.status_code == 201:
-                app.logger.info(f"Product added successfully: {product_data}")
-                return redirect(url_for('merchant_viewproducts', product_category=product_category))
+            # Make the request to the product category API
+            product_response = requests.post(product_url, headers=headers, json=received_product_post_data)
+            
+            # Parse the response
+            response_data = product_response.json()
+
+            # Check if the response is successful
+            if product_response.status_code == 201:
+                print("Product category created successfully.")
+                output_message = "Product added successfully."
+                success = True
+            elif product_response.status_code == 200:
+                print("Product category found.")
+                output_message = "Product added successfully."
+                success = True
             else:
-                app.logger.error(f"Failed to add product: {add_product_response.content}")
-                flash('Failed to add product. Please try again.', 'error')
-        except Exception as e:
-            app.logger.error(f"An error occurred: {e}")
-            flash('An error occurred. Please try again.', 'error')
+                print("Error: ", product_response.status_code)
+                output_message = "Something went wrong while adding this product. Please try again later."
+                success = False
 
-    return redirect(url_for("merchant_viewproducts", product_category=product_category))
+        except requests.exceptions.RequestException as e:
+            print("Exception occurred while interacting with the product category API.")
+            print(str(e))
+            output_message = "Whoops! Something unexpected happened. Please try again later."
+            success = False
 
-def generate_new_product_id():
-    pass
+        # If success, redirect to the 'merchant_viewproducts' route
+        if success:
+            return redirect(url_for('merchant_viewproducts'))  # Assuming this route exists
 
+        # Return the output message as JSON (for debugging or handling errors)
+        return jsonify({'message': output_message, 'success': success})
+
+    # If it's a GET request, render the form
+    return render_template('merchant_addproduct.html')
+
+# Function to handle saving product images
 def save_product_images(product_image, upload_folder):
     image_paths = {}
 
     if product_image:
-        # Save product image
+        # Save the product image
         product_image_path = os.path.join(upload_folder, secure_filename(product_image.filename))
         product_image.save(product_image_path)
         image_paths['product_image'] = product_image_path
@@ -1138,48 +1147,35 @@ def update_product(product_id, product_name, product_category, product_display_t
 
 # Delete product
 @app.route('/delete_product/<int:product_id>', methods=['DELETE'])
-def merchant_deleteproduct(product_id):
-    output_msg = ""
-    product_to_be_deleted = None
-    product_category=0
+def delete_product(product_id):
+    # Construct the URL for deleting the product
+    url = f"{PRODUCT_CATEGORY_API_BASE_URL}/product/{product_id}"
 
     try:
-        product_to_delete = f"{PRODUCT_CATEGORY_API_BASE_URL}/product/{product_id}"
+        # Send the DELETE request to the external API
+        response = requests.delete(url)
 
-        # Check if the product exists before trying to delete it
-        response_check = requests.get(product_to_delete)
-        print("RESPONSE CHECK FOR PRODUCT TO DELETE")
-        print(response_check)
-        if response_check.status_code != 200:
-            output_msg = "Sorry, this product no longer exists in our system."
+        # Check if the response status code is 200 or 204 (successful deletion)
+        if response.status_code in [200, 204]:
+            return jsonify({
+                'success': True,
+                'message': 'Product deleted successfully'
+            }), 200  # Return 200 OK on success
         else:
-            # Attempt to delete the product
-            product_to_be_deleted = json.loads(response_check.text)
-            print("PRODUCT TO BE DELETED")
-            print(product_to_be_deleted)
-            product_category = product_to_be_deleted["product_category"]
-            print("PRODUCT CATEGORY:")
-            print(product_category)
-            response = requests.delete(product_to_delete)
-            if response.status_code == 204:
-                output_msg = "This product has been successfully removed from the system."
-            else:
-                output_msg = f"Failed to delete the product. Status code: {response.status_code}, Message: {response.text}"
-        
-        flash(output_msg)  # Flash the success or error message
+            # If the status code is not 200 or 204, return an error message
+            return jsonify({
+                'success': False,
+                'message': f'Failed to delete product. Status code: {response.status_code}, Response: {response.text}'
+            }), 400  # Return 400 Bad Request on failure
 
-    except Exception as e:
-        output_msg = f"An error occurred while deleting the product: {str(e)}"
-        flash(output_msg)
-
-    # Redirect back to the product list or the appropriate page
-    return redirect(url_for("merchant_viewproducts", category_id=product_category))
-
-     
-@app.route('/merchant_addproduct')
-def merchant_addproduct():
-    return render_template("merchant_addproduct.html")
-
+    except requests.exceptions.RequestException as e:
+        # Handle network-related errors (e.g., connection problems, timeouts)
+        return jsonify({
+            'success': False,
+            'message': f'Error occurred while trying to delete the product: {e}'
+        }), 500  # Return 500 Internal Server Error if there is an exception
+    
+    
 
 @app.route('/shopping_cart')
 def shopping_cart():

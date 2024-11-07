@@ -1,0 +1,94 @@
+<!-- Delete Modal code -->
+<div id="delete_modal_{{ product.id }}" class="modal">
+  <span
+    onclick="document.getElementById('delete_modal_{{ product.id }}').style.display='none'"
+    class="close"
+    title="Close Modal"
+    >×</span
+  >
+  <form
+    id="delete_product_{{ product.id }}_form"
+    class="modal-content"
+    action=""
+  >
+    <div
+      class="container"
+      style="
+        background-color: #ffffff;
+        margin-top: 10%;
+        margin-left: 30%;
+        margin-right: 30%;
+      "
+    >
+      <h1>Delete Product</h1>
+      <!-- This should be rendered properly -->
+      <h4>Are you sure you want to delete this product?</h4>
+      <div class="clearfix">
+        <button
+          type="button"
+          onclick="document.getElementById('delete_modal_{{ product.id }}').style.display='none'"
+          class="cancelbtn btn-info btn-md"
+        >
+          Cancel
+        </button>
+        <input
+          type="submit"
+          class="deletebtn btn-danger btn-md"
+          value="Delete"
+        />
+      </div>
+    </div>
+  </form>
+  <div class="delete_product_msg" id="delete_product_msg"></div>
+</div>
+
+<script>
+  // Get the modal
+  var modal = document.getElementById("delete_modal_{{ product.id }}");
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function (event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  };
+</script>
+
+<script>
+  $(document).ready(function () {
+    $("#delete_product_{{ product.id }}_form").submit(function (e) {
+      console.log("here in delete???");
+      e.preventDefault();
+      console.log("here again???");
+      //var formData = $(this).serialize();
+
+      $.ajax({
+        url: "/delete_product/{{ product.id }}",
+        type: "DELETE",
+        data: {
+          message: "Delete this product!",
+        },
+        success: function (response) {
+          if (response.success) {
+            $("#delete_product_msg")
+              .text(response.message)
+              .removeClass("text-error-msg")
+              .addClass("text-success-msg");
+            window.location.href = "/merchant_viewproducts";
+          } else {
+            $("#delete_product_msg")
+              .text(response.message)
+              .removeClass("text-success-msg")
+              .addClass("text-error-msg");
+          }
+        },
+        error: function (xhr, status, error) {
+          console.log(xhr.responseText);
+          $("#delete_product_msg")
+            .text("Error: " + xhr.responseJSON.message)
+            .removeClass("text-success-msg")
+            .addClass("text-error-msg");
+        },
+      });
+    });
+  });
+</script>
