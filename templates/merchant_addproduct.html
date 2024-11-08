@@ -201,12 +201,15 @@
           console.log("here???");
           e.preventDefault(); // Prevent form from submitting normally
           console.log("here again???");
-          var formData = $(this).serialize();
+          var form = document.getElementById("addProductForm");
+          var formData = new FormData(form);
 
           $.ajax({
-            url: "/merchant_add_product_to_category/{{ category_id }}", // Ensure this points to the correct URL
+            url: "/merchant_add_product_to_category/{{ product_category_id }}", // Ensure this points to the correct URL
             type: "POST",
             data: formData,
+            processData: false,
+            contentType: false,
             success: function (response) {
               // Log the response to check its content
               console.log(response);
@@ -220,7 +223,7 @@
 
                 // Redirect to the view products page
                 window.location.href =
-                  "/merchant_viewproducts/{{ category_id }}";
+                  "/merchant_viewproducts/{{ product_category_id }}";
               } else {
                 // If there was an error, show the error message
                 $("#add-product-msg")

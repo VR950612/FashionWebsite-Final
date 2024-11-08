@@ -72,6 +72,8 @@ def save_file(file, upload_folder):
         filename_to_save = f"{dt_now}_{filename}"
         file_path = os.path.join(upload_folder, filename_to_save)
         file.save(file_path)
+        print("DID FILE SAVE??")
+        print("FILE PATH:" + file_path)
         return file_path
     return None
  
@@ -1045,13 +1047,17 @@ def merchant_add_product_to_category(category_id):
         discounted_price = float(request.form.get('discounted_price', 0))
         product_image = request.files.get('product_image')
 
+        print(product_image)
+
         product_category_image_folder = decide_product_image_category_folder(category_id)
         print("PRODUCT CATEGORY IMAGE FOLDER IS: " + product_category_image_folder)
-        complete_product_image_path = app.config['PRODUCT_IMAGE_UPLOAD_BASE_FOLDER'] + product_category_image_folder
+        complete_product_image_path = app.config['PRODUCT_IMAGE_UPLOAD_FOLDER_BASE_PATH'] + product_category_image_folder
         print(complete_product_image_path)
 
         # Save the images
-        product_image_path = save_file(product_image, app.config['PRODUCT_IMAGE_UPLOAD_BASE_FOLDER'])        
+        product_image_path = save_file(product_image, complete_product_image_path)
+        print("DOES IT GET HERE??")
+        print(product_image_path)
       
         received_product_post_data = {
             "product_name": product_name,
