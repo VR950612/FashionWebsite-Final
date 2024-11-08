@@ -41,22 +41,22 @@
       }
       .text-white {
         margin-top: 5px;
-        font-size: 14px;
+        font-size: 16px;
       }
       h1 {
         font-size: 2em;
         margin-left: 20px;
       }
       .form-group label {
-        font-size: 12px;
+        font-size: 16px;
       }
       .form-control,
       .form-control-file {
-        font-size: 12px;
+        font-size: 16px;
         padding: 4px;
       }
       .btn {
-        font-size: 12px;
+        font-size: 16px;
         padding: 4px 10px;
       }
     </style>
@@ -121,18 +121,8 @@
           </ul>
         </div>
 
-        <form id="addProductForm" method="post">
-          <div class="form-group">
-            <label for="product_category">Product Category</label>
-            <input
-              type="text"
-              class="form-control"
-              id="product_category"
-              name="product_category"
-              required
-            />
-          </div>
-          <div class="form-group">
+        <form id="addProductForm" method="post" enctype="multipart/form-data">
+          <div class="form-group text-white">
             <label for="product_name">Product Name</label>
             <input
               type="text"
@@ -142,7 +132,7 @@
               required
             />
           </div>
-          <div class="form-group">
+          <div class="form-group text-white">
             <label for="product_display_title">Product Display Title</label>
             <input
               type="text"
@@ -152,7 +142,7 @@
               required
             />
           </div>
-          <div class="form-group">
+          <div class="form-group text-white">
             <label for="product_description">Product Description</label>
             <textarea
               class="form-control"
@@ -161,7 +151,7 @@
               required
             ></textarea>
           </div>
-          <div class="form-group">
+          <div class="form-group text-white">
             <label for="product_price">Product Price (NZD $)</label>
             <input
               type="number"
@@ -172,7 +162,7 @@
               required
             />
           </div>
-          <div class="form-group">
+          <div class="form-group text-white">
             <label for="product_quantity">Product Quantity</label>
             <input
               type="number"
@@ -182,7 +172,7 @@
               required
             />
           </div>
-          <div class="form-group">
+          <div class="form-group text-white">
             <label for="product_image">Product Image</label>
             <input
               type="file"
@@ -195,6 +185,15 @@
         </form>
         <span id="add-product-msg"></span>
       </div>
+      <!-- Go to Previous Page Link -->
+      <div style="margin-top: 30px">
+        <a
+          href="javascript:history.back()"
+          class="btn btn-info margin-right:10px;"
+          style="background-color: black; color: white; margin-right: 10px"
+          >Go to previous page</a
+        >
+      </div>
     </div>
     <script>
       $(document).ready(function () {
@@ -205,7 +204,7 @@
           var formData = $(this).serialize();
 
           $.ajax({
-            url: "/merchant_addproduct", // Ensure this points to the correct URL
+            url: "/merchant_add_product_to_category/{{ category_id }}", // Ensure this points to the correct URL
             type: "POST",
             data: formData,
             success: function (response) {
@@ -220,7 +219,8 @@
                   .addClass("text-success-msg");
 
                 // Redirect to the view products page
-                window.location.href = "/merchant_viewproducts";
+                window.location.href =
+                  "/merchant_viewproducts/{{ category_id }}";
               } else {
                 // If there was an error, show the error message
                 $("#add-product-msg")

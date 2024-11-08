@@ -5,6 +5,7 @@ from wtforms.validators import DataRequired, InputRequired, Length
 from werkzeug.utils import secure_filename
 from datetime import datetime as dt
 from flask import Flask, flash
+from datetime import datetime, timezone
 
 
 import requests, json, os
@@ -40,6 +41,43 @@ stripe_keys = {
 }
 
 stripe.api_key = stripe_keys['secret_key']
+
+# Folder configuration for product images
+app.config['PRODUCT_IMAGE_UPLOAD_FOLDER_BASE_PATH'] = 'static/img/'
+
+# Allowed file extensions for file uploads
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def decide_product_image_category_folder(product_category):
+    if product_category == 1:
+        return 'category_1/'
+    elif product_category == 2:
+        return 'category_2/'
+    elif product_category == 3:
+        return 'category_3/'
+    elif product_category == 4:
+        return 'category_4'
+    else:
+        return 'unknown_category/'
+
+# Function to check if a file has an allowed extension
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    
+def save_file(file, upload_folder):
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        dt_now = dt.now().strftime("%Y%m%d%H%M%S%f")
+        file_extension = filename.rsplit('.', 1)[1].lower()
+        filename_to_save = f"{dt_now}_{filename}"
+        file_path = os.path.join(upload_folder, filename_to_save)
+        file.save(file_path)
+        return file_path
+    return None
+ 
+def get_file_extension(filename):
+    return filename.rsplit('.', 1)[1].lower()
+
 
 #Database Configuration
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
@@ -951,7 +989,7 @@ def delete_category(category_id):
             'message': f'Error occurred while trying to delete the category: {e}'
         }), 500
 
-# #merchant admin view all products
+# #merchant admin view all products by selected category
 @app.route('/merchant_viewproducts/<int:category_id>', methods=['GET'])
 def merchant_viewproducts(category_id):
     product_category_id = category_id
@@ -979,30 +1017,41 @@ def merchant_viewproducts(category_id):
             print("CHECK 1")
 
             print("CHECK2")      
-            return render_template("merchant_viewproducts.html", products=products_by_category_response_data)
+            return render_template("merchant_viewproducts.html", products=products_by_category_response_data, product_category_id=product_category_id)
         else:
-            return render_template("merchant_viewproducts.html", products=None)
+            return render_template("merchant_viewproducts.html", products=None, product_category_id=product_category_id)
     except:
         print("Whoops something went wrong here!")
-        return render_template("merchant_viewproducts.html", products=None)
+        return render_template("merchant_viewproducts.html", products=None, product_category_id=product_category_id)
 
    
 #merchant admin add new product
-@app.route('/merchant_addproduct', methods=['GET', 'POST'])
-def merchant_addproduct():
+@app.route('/merchant_add_product_to_category/<int:category_id>', methods=['GET', 'POST'])
+def merchant_add_product_to_category(category_id):
     success = False
     output_message = ""
+    product_category_id = category_id
+    print(product_category_id)
 
     if request.method == 'POST':
         # Handle the POST request (product addition logic)
         product_name = request.form.get('product_name', '')
-        product_category = request.form.get('product_category', '')
+        product_category = product_category_id
         product_display_title = request.form.get('product_display_title', '')
         product_description = request.form.get('product_description', '')
         product_price = float(request.form.get('product_price', 0))
         product_quantity = int(request.form.get('product_quantity', 0))
         discount_percentage = float(request.form.get('discount_percentage', 0))  # Default to 0 if not provided
-        discounted_price = float(request.form.get('discounted_price', 0)) 
+        discounted_price = float(request.form.get('discounted_price', 0))
+        product_image = request.files.get('product_image')
+
+        product_category_image_folder = decide_product_image_category_folder(category_id)
+        print("PRODUCT CATEGORY IMAGE FOLDER IS: " + product_category_image_folder)
+        complete_product_image_path = app.config['PRODUCT_IMAGE_UPLOAD_BASE_FOLDER'] + product_category_image_folder
+        print(complete_product_image_path)
+
+        # Save the images
+        product_image_path = save_file(product_image, app.config['PRODUCT_IMAGE_UPLOAD_BASE_FOLDER'])        
       
         received_product_post_data = {
             "product_name": product_name,
@@ -1050,15 +1099,11 @@ def merchant_addproduct():
             output_message = "Whoops! Something unexpected happened. Please try again later."
             success = False
 
-        # If success, redirect to the 'merchant_viewproducts' route
-        if success:
-            return redirect(url_for('merchant_viewproducts'))  # Assuming this route exists
-
         # Return the output message as JSON (for debugging or handling errors)
         return jsonify({'message': output_message, 'success': success})
 
     # If it's a GET request, render the form
-    return render_template('merchant_addproduct.html')
+    return render_template('merchant_addproduct.html', product_category_id=product_category_id)
 
 # Function to handle saving product images
 def save_product_images(product_image, upload_folder):
