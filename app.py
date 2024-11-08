@@ -1068,6 +1068,7 @@ def merchant_add_product_to_category(category_id):
             "product_quantity": product_quantity,
             "discount_percentage" : discount_percentage,
             "discounted_price" : discounted_price,
+            "product_image": product_image_path
             }
 
         headers = {
