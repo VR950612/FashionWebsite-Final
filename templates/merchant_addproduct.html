@@ -3,28 +3,83 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add New Product - Fashion Website</title>
+    <title>Fashion Website</title>
     <link
-      href="{{ url_for('static', filename='css/style.css') }}"
-      rel="stylesheet"
-    />
-    <link
-      href="{{ url_for('static', filename='css/merchant.css') }}"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-      integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
+    href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet"/>
+  <link
+    href="{{ url_for('static', filename='css/merchant.css') }}" rel="stylesheet"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript">
+      $(function () {
+        $(".search_button").click(function () {
+          var search_word = $("#search_box").val();
+          if (search_word.trim() !== "") {
+            $.ajax({
+              type: "POST",
+              url: "/searchdata",
+              data: { search_word: search_word },
+              cache: false,
+              beforeSend: function () {
+                $("#insert_search").empty();
+                $("#flash").show();
+                $("#searchword").show();
+                $(".searchword").text(search_word);
+                $("#flash").html(
+                  '<img src="/static/img/category_2/loader.gif" align="absmiddle"> Loading Response...'
+                );
+              },
+              success: function (response) {
+                $("#insert_search").show().append(response.data);
+                $("#flash").hide();
+              },
+            });
+          }
+          return false;
+        });
+      });
+    </script>
+  </head>
 
-    <style>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <a
+          class="navbar-brand"
+          href="/"
+          style="font-size:50px; color: rgba(250, 38, 102, 0.901)"
+          >Fashion Fiesta</a
+        >
+      </div>
+      <ul class="navbar-nav d-flex flex-row ms-auto text-white">
+        <li class="nav-item">
+            <span class="text-primary">Hello, {{ session['logged_in_merchant'].get('first_name', 'Guest') }}! </span>
+            <a class="btn btn-link text-reset" href="/merchant_logout">Logout</a>
+        </li>
+      </ul>
+   </div>
+  </nav>
+  <div id="flash" style="display: none"></div>
+  <div id="insert_search"></div>
+  </body>
+  <link
+  rel="stylesheet"
+  href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+/>
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+  	<!--Bootsrap 4 CDN-->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    
+    <!--Fontawesome CDN-->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+     <style>
       html,
       body {
         height: 170%; /* Ensure the html and body are full height */
@@ -60,32 +115,7 @@
         padding: 4px 10px;
       }
     </style>
-  </head>
-  <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
-        <a
-          class="navbar-brand"
-          href="/"
-          style="font-size: 50px; color: rgba(250, 38, 102, 0.901)"
-          >Fashion Fiesta</a
-        >
-        <ul class="navbar-nav d-flex flex-row ms-auto text-white">
-          <li class="nav-item">
-            <span class="text-primary"
-              >Hello, {{ session['logged_in_merchant'].get('first_name',
-              'Guest') }}!</span
-            >
-            <a class="btn btn-link text-reset" href="/merchant_logout"
-              >Logout</a
-            >
-          </li>
-        </ul>
-      </div>
-    </nav>
-
-    <div class="container-fluid">
       <div class="row">
         <!-- Side Navigation -->
         <div class="col-lg-2 col-md-3 col-sm-4 col-12 mt-5">
@@ -114,7 +144,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link text-white" style="font-size: 17px">
+              <a href="/merchant_user_details" class="nav-link text-white" style="font-size: 17px">
                 <i class="fas fa-user"></i> My Account
               </a>
             </li>
@@ -122,7 +152,7 @@
         </div>
 
         <form id="addProductForm" method="post" enctype="multipart/form-data">
-          <div class="form-group text-white">
+          <div class="form-group text-white" style="margin-top: 20px;">
             <label for="product_name">Product Name</label>
             <input
               type="text"
@@ -132,7 +162,7 @@
               required
             />
           </div>
-          <div class="form-group text-white">
+          <div class="form-group text-white" style="margin-top: 25px;">
             <label for="product_display_title">Product Display Title</label>
             <input
               type="text"
@@ -142,7 +172,7 @@
               required
             />
           </div>
-          <div class="form-group text-white">
+          <div class="form-group text-white" style="margin-top: 25px;">
             <label for="product_description">Product Description</label>
             <textarea
               class="form-control"
@@ -151,7 +181,7 @@
               required
             ></textarea>
           </div>
-          <div class="form-group text-white">
+          <div class="form-group text-white" style="margin-top: 25px;">
             <label for="product_price">Product Price (NZD $)</label>
             <input
               type="number"
@@ -162,7 +192,7 @@
               required
             />
           </div>
-          <div class="form-group text-white">
+          <div class="form-group text-white" style="margin-top: 25px;">
             <label for="product_quantity">Product Quantity</label>
             <input
               type="number"
@@ -172,7 +202,7 @@
               required
             />
           </div>
-          <div class="form-group text-white">
+          <div class="form-group text-white" style="margin-top: 25px;">
             <label for="product_image">Product Image</label>
             <input
               type="file"
@@ -181,19 +211,20 @@
               name="product_image"
             />
           </div>
-          <button type="submit" class="btn btn-primary">Add Product</button>
+          <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Add Product</button>
+          <div style="margin-top: 30px; padding-right: 20px;" class="d-flex">
+            <a
+              href="javascript:history.back()"
+              class="btn btn-info"
+              style="background-color: black; color: white;"
+            >
+              Go to previous page
+            </a>
+          </div>
         </form>
         <span id="add-product-msg"></span>
       </div>
       <!-- Go to Previous Page Link -->
-      <div style="margin-top: 30px">
-        <a
-          href="javascript:history.back()"
-          class="btn btn-info margin-right:10px;"
-          style="background-color: black; color: white; margin-right: 10px"
-          >Go to previous page</a
-        >
-      </div>
     </div>
     <script>
       $(document).ready(function () {

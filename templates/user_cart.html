@@ -1,44 +1,204 @@
-{% include "header.html" %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shopping Cart</title>
-    <link
-      rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-    />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <style>
-      /* Adjust the width and styles as needed */
-      .quantity {
-        text-align: center;
-      }
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" >
 
-      .input-group-prepend,
-      .input-group-append {
-        width: 35px; /* Adjust button width */
-      }
 
-      .btn-minus,
-      .btn-plus {
-        width: 35px; /* Adjust button width */
-      }
-    </style>
-  </head>
+<!-- Bootstrap JS and jQuery (before closing </body>) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>   
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+   </head>
   <body>
-    <div class="container mt-4">
-      <div class="row justify-content-end mb-4">
-        <div class="col-md-4 text-right">
-          <a href="/logout" class="btn btn-danger">Logout</a>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/" style="font-size:50px; color: rgba(250, 38, 102, 0.901)">
+            Fashion Fiesta
+          </a>
         </div>
-      </div>
-
-      <h2>Your Cart</h2>
-      <div class="row">
+      
+        <!-- Main Navbar Links -->
+        <ul class="navbar-nav d-flex flex-row ms-auto" style="padding-right: 80px;">
+            {% if session['logged_in_user'] %}
+              <!-- If user is logged in, show Welcome, Logout, and Categories -->
+              <li class="nav-item">
+                <a href="#">Welcome, {{ session['logged_in_user'].get('first_name', 'Guest') }}</a>
+              </li>
+                    
+              <!-- Categories Dropdown (only visible when logged in) -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle custom-font-size" style="margin-right: 60px;" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Categories
+                </a>
+                <!-- Dropdown menu that appears under "Categories" -->
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="/category-name/Dress"><b>Dresses</b></a>
+                    <a class="dropdown-item" href="/category-name/Top"><b>Tops</b></a>
+                    <a class="dropdown-item" href="/category-name/Skirt"><b>Skirts</b></a>
+                    <a class="dropdown-item" href="/category-name/Jumpsuit"><b>Jumpsuits</b></a>
+                </div>
+            </li>
+            {% else %}
+              <!-- If user is not logged in, only show Categories -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle custom-font-size" style="margin-right: 60px;" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Categories
+                </a>
+                <!-- Dropdown menu for Categories (still available when logged out) -->
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="/category-name/Dress"><b>Dresses</b></a>
+                  <a class="dropdown-item" href="/category-name/Top"><b>Tops</b></a>
+                  <a class="dropdown-item" href="/category-name/Skirt"><b>Skirts</b></a>
+                  <a class="dropdown-item" href="/category-name/Jumpsuit"><b>Jumpsuits</b></a>
+                </div>
+              </li>
+            {% endif %}
+        
+            <!-- Item in Cart dropdown (this can be shown regardless of login status) -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle custom-font-size" style="margin-right: 60px; white-space: nowrap;" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Item in Cart
+              </a>
+              <!-- Add cart items dropdown or content here -->
+            </li>
+          </ul>
+        </nav>
+        <style>
+            html, body {
+                height: 170%; 
+                margin: 0; 
+                background-color: #222;
+            }
+        
+            .navbar {
+                margin-bottom: 20px;
+            }
+        
+            .nav {
+                border-right: 1px solid white;
+            }
+        
+            .form-container {
+                padding: 40px 20px; /* Add top padding */
+                border-radius: 5px;
+            }
+        
+            .form-container h1 {
+                margin-bottom: 10px;
+            }
+        
+            .table-custom {
+                max-width: 850px; 
+                width: 100%; 
+                margin-left: 60px; 
+                margin-right: 0px; 
+            }
+        
+            .btn-margin {
+                margin-top: 10px;
+            }
+        
+            .custom-font-size {
+                font-size: 14px; 
+            }
+            .nav-item .nav-link {
+                color: white !important; 
+                text-align: left;
+            }
+        
+            .navbar .dropdown-menu {
+                background-color: #222 !important; 
+                border: none; 
+            }
+        
+            .navbar .dropdown-item {
+                color: white !important;
+                background-color: #222 !important; 
+            }
+            .navbar .dropdown-item:hover,
+            .navbar .dropdown-item:focus {
+                background-color: #222 !important; 
+                color: white !important;
+            }
+            .navbar-nav .nav-item {
+                white-space: nowrap; 
+            }
+            .nav-link {
+                font-size: 17px;
+                color: white;
+            }
+            /* Styling for the Fashion Fiesta header */
+            .custom-header {
+              font-size: 50px;
+              color: rgba(250, 38, 102, 0.901);
+            }
+      
+            .quantity {
+              text-align: center;
+            }
+      
+            .input-group-prepend,
+            .input-group-append {
+              width: 35px;
+            }
+      
+            .btn-minus,
+            .btn-plus {
+              width: 35px; 
+            }
+            h2 {
+              display: block;
+              visibility: visible;
+              color: white;  
+          }
+          .summary-card {
+            width: 50%; /* Adjust the width as needed */
+            margin: 18x;
+          }
+        </style>
+    </head>
+ <body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Side Navigation -->
+            <div class="col-lg-2 col-md-3 col-sm-4 col-12 mt-5">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="" class="nav-link text-white" style="font-size: 17px;">
+                            <i class=""></i> Change Password
+                        </a>
+                    </li>
+                <li class="nav-item">
+                    <a href="" class="nav-link text-white" style="font-size: 17px;">
+                        <i class=""></i> My Details
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link text-white" style="font-size: 17px;">
+                        <i class=""></i> My Orders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/logout" class="nav-link text-white" style="font-size: 17px;">
+                        <i class="fa fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+      <div class="container pb-5"> <!-- Padding-bottom to push content down -->
+    <h2>Your Cart</h2>
+    <div class="row">
         <div class="col-md-12">
           <div class="list-group">
             {% for item in cart %}
@@ -70,7 +230,7 @@
                     <input
                       type="text"
                       class="form-control quantity"
-                      value="{{ item.quantity }}"
+                      value="{{ item.product_quantity }}"
                       readonly
                     />
                     <div class="input-group-append">
@@ -95,7 +255,7 @@
       </div>
       <div class="row mt-4">
         <div class="col-md-12">
-          <div class="card">
+          <div class="card summary-card">
             <div class="card-body">
               <h5 class="card-title">Order Summary</h5>
               <p class="card-text">Total Items: {{ total_quantity }}</p>

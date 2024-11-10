@@ -1,304 +1,300 @@
-{% include "header.html" %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopping Cart</title>
 
-<section id="login-background" class="gradient-background">
-  <div class="ms-5 me-5 row g-5 pt-5 pb-5">
-    <div class="col-md-5 col-lg-4 order-md-last">
-      <h4 class="d-flex justify-content-between align-items-center mb-3">
-        <span class="text-black">Your cart</span>
-        <span class="badge bg-dark rounded-pill">3</span>
-      </h4>
-      <ul class="list-group mb-3">
-        <li class="list-group-item d-flex justify-content-between lh-sm">
-          <div>
-            <h6 class="my-0">Product name</h6>
-            <small class="text-muted">Brief description</small>
-          </div>
-          <span class="text-muted">$12</span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between lh-sm">
-          <div>
-            <h6 class="my-0">Second product</h6>
-            <small class="text-muted">Brief description</small>
-          </div>
-          <span class="text-muted">$8</span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between lh-sm">
-          <div>
-            <h6 class="my-0">Third item</h6>
-            <small class="text-muted">Brief description</small>
-          </div>
-          <span class="text-muted">$5</span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between bg-light">
-          <div class="text-success">
-            <h6 class="my-0">Promo code</h6>
-            <small>EXAMPLECODE</small>
-          </div>
-          <span class="text-success">−$5</span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between">
-          <span>Total (USD)</span>
-          <strong>$20</strong>
+    <!-- Bootstrap and Font Awesome CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    
+    <!-- Bootstrap JS and jQuery (before closing </body>) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+      html, body {
+        height: 170%; 
+        margin: 0; 
+        background-color: #222;
+      }
+      .navbar {
+        margin-bottom: 20px;
+      }
+      .nav .dropdown-menu {
+        background-color: #222 !important; 
+        border: none; 
+      }
+      .nav-item .nav-link {
+        color: white !important; 
+        text-align: left;
+      }
+      .form-container {
+        padding: 40px 20px;
+        border-radius: 5px;
+      }
+      .table-custom {
+        max-width: 850px; 
+        width: 100%; 
+        margin-left: 60px; 
+        margin-right: 0px;
+      }
+      .btn-margin {
+        margin-top: 10px;
+      }
+      .custom-font-size {
+        font-size: 14px; 
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/" style="font-size:50px; color: rgba(250, 38, 102, 0.901)">Fashion Fiesta</a>
+      </div>
+
+      <!-- Main Navbar Links -->
+      <ul class="navbar-nav d-flex flex-row ms-auto" style="padding-right: 80px;">
+        {% if session['logged_in_user'] %}
+          <!-- If user is logged in, show Welcome, Logout, and Categories -->
+          <li class="nav-item">
+            <a href="#">Welcome, {{ session['logged_in_user'].get('first_name', 'Guest') }}</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle custom-font-size" style="margin-right: 60px;" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Categories</a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="/category-name/Dress"><b>Dresses</b></a>
+              <a class="dropdown-item" href="/category-name/Top"><b>Tops</b></a>
+              <a class="dropdown-item" href="/category-name/Skirt"><b>Skirts</b></a>
+              <a class="dropdown-item" href="/category-name/Jumpsuit"><b>Jumpsuits</b></a>
+            </div>
+          </li>
+        {% else %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle custom-font-size" style="margin-right: 60px;" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Categories</a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="/category-name/Dress"><b>Dresses</b></a>
+              <a class="dropdown-item" href="/category-name/Top"><b>Tops</b></a>
+              <a class="dropdown-item" href="/category-name/Skirt"><b>Skirts</b></a>
+              <a class="dropdown-item" href="/category-name/Jumpsuit"><b>Jumpsuits</b></a>
+            </div>
+          </li>
+        {% endif %}
+        
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle custom-font-size" style="margin-right: 60px; white-space: nowrap;" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Item in Cart</a>
         </li>
       </ul>
+    </nav>
 
-      <form class="card p-2">
-        <div class="input-group">
-          <input type="text py-2" class="form-control" placeholder="Promo code" />
-          <button type="submit" class="btn btn-dark">Redeem</button>
+    <div class="container mt-4">
+      <h2>Checkout</h2>
+      
+      <!-- User Information Card -->
+      <div class="card">
+        <div class="card-header">User Information</div>
+        <div class="card-body">
+          <p class="card-text"><strong>Name:</strong></p>
+          <p class="card-text"><strong>Email:</strong></p>
+          <p class="card-text"><strong>Mobile:</strong></p>
         </div>
-      </form>
-    </div>
-    <div class="col-md-7 col-lg-8">
-      <h4 class="mb-3">Billing address</h4>
-      <form class="needs-validation" novalidate="">
-        <div class="row g-3">
-          <div class="col-sm-6">
-            <label for="firstName" class="form-label">First name</label>
-            <input
-              type="text"
-              class="form-control"
-              id="firstName"
-              placeholder=""
-              value=""
-              required=""
-            />
-            <div class="invalid-feedback">Valid first name is required.</div>
-          </div>
+      </div>
 
-          <div class="col-sm-6">
-            <label for="lastName" class="form-label">Last name</label>
-            <input
-              type="text"
-              class="form-control"
-              id="lastName"
-              placeholder=""
-              value=""
-              required=""
-            />
-            <div class="invalid-feedback">Valid last name is required.</div>
-          </div>
-
-          <div class="col-12 pb-4">
-            <label for="username" class="form-label">Username</label>
-            <div class="input-group has-validation">
-              <span class="input-group-text" pb-10>@</span>
-              <input
-                type="py-2 text"
-                class="form-control"
-                id="username"
-                placeholder="Username"
-                required=""
-              />
-              <div class="invalid-feedback">Your username is required.</div>
-            </div>
-          </div>
-
-          <div class="col-12 pb-4">
-            <label for="email" class="form-label"
-              >Email <span class="text-muted">(Optional)</span></label
-            >
-            <input
-              type="email"
-              class="form-control"
-              id="email"
-              placeholder="you@example.com"
-            />
-            <div class="invalid-feedback">
-              Please enter a valid email address for shipping updates.
-            </div>
-          </div>
-
-          <div class="col-12">
-            <label for="address" class="form-label">Address</label>
-            <input
-              type="text"
-              class="form-control"
-              id="address"
-              placeholder="1234 Main St"
-              required=""
-            />
-            <div class="invalid-feedback">
-              Please enter your shipping address.
-            </div>
-          </div>
-
-          <div class="col-12">
-            <label for="address2" class="form-label"
-              >Address 2 <span class="text-muted">(Optional)</span></label
-            >
-            <input
-              type="text"
-              class="form-control"
-              id="address2"
-              placeholder="Apartment or suite"
-            />
-          </div>
-
-          <div class="col-md-5">
-            <label for="country" class="form-label">Country</label>
-            <select class="form-select" id="country" required="">
-              <option value="">Select the Country</option>
-              <option value="1">Australia</option>
-              <option value="2">New Zealand</option>
-            </select>
-            <div class="invalid-feedback">Please select a valid country.</div>
-          </div>
-
-          <div class="col-md-4">
-            <label for="state" class="form-label">State</label>
-            <select class="form-select" id="state" required="">
-              <option value="">Select the State</option>
-              <option value="1">Queensland</option>
-              <option value="2">Tasmania</option>
-              <option value="3">New South Wales</option>
-              <option value="4">Victoria</option>
-              <option value="5">Western Australia</option>
-              <option value="6">South Australia</option>
-              <option value="7">Auckland</option>
-              <option value="8">Wellington</option>
-              <option value="9">Northland</option>
-              <option value="10">Otago</option>
-              <option value="11">Taranaki</option>
-              <option value="12">Canterbury</option>
-              <option value="13">Marlborough</option>
-              <option value="14">Southland</option>
-              <option value="15">West Coast</option>
-              <option value="16">Bay of Plenty</option>
-              <option value="17">Manawatu</option>
-              <option value="18">Tasman</option>
-              <option value="19">Waikato</option>
-              <option value="20">Gisborne</option>
-            </select>
-            <div class="invalid-feedback">Please provide a valid state.</div>
-          </div>
-
-          <div class="col-md-3">
-            <label for="zip" class="form-label">Zip</label>
-            <input
-              type="text"
-              class="form-control"
-              id="zip"
-              placeholder=""
-              required=""
-            />
-            <div class="invalid-feedback">Zip code required.</div>
+      <!-- Cart Items Card -->
+      <div class="card mt-4">
+        <div class="card-header">Cart Items</div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Total Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="cart-item">
+                  <td></td>
+                  <td class="price"></td>
+                  <td class="quantity"></td>
+                  <td class="total-price"></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
+      </div>
 
-        <hr class="my-4" />
+      <!-- Shipping Address Card -->
+      <div class="card mt-4">
+        <div class="card-header">Shipping Address</div>
+        <div class="card-body">
+          <form id="payment-form">
+            <div class="form-group">
+              <label for="shipping_address">Shipping Address</label>
+              <textarea class="form-control" id="shipping_address" name="shipping_address" rows="3" required></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="shipping_city">City</label>
+                <input type="text" class="form-control" id="shipping_city" name="shipping_city" required />
+              </div>
+              <div class="form-group col-md-4">
+                <label for="shipping_state">State</label>
+                <input type="text" class="form-control" id="shipping_state" name="shipping_state" required />
+              </div>
+              <div class="form-group col-md-2">
+                <label for="shipping_zip">Zip</label>
+                <input type="text" class="form-control" id="shipping_zip" name="shipping_zip" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="shipping_country">Country</label>
+              <input type="text" class="form-control" id="shipping_country" name="shipping_country" required />
+            </div>
 
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="same-address" />
-          <label class="form-check-label" for="same-address"
-            >Shipping address is the same as my billing address</label
+            <!-- Payment Information Card -->
+            <div class="card mt-4">
+              <div class="card-header">Payment Information</div>
+              <div class="card-body">
+                <div class="form-row">
+                  <div id="card-element" class="form-control"></div>
+                  <div id="card-errors" role="alert" class="error-message"></div>
+                </div>
+                <button type="submit" class="btn btn-primary launch" style="margin: 10px;" data-toggle="modal" data-target="#staticBackdrop">
+                  <i class="fa fa-info"></i> Place Order
+                </button>
+              </div>
+            </div>
+            <input type="hidden" name="total_amount" id="total_amount" value="{{ total_amount }}" />
+          </form>
+        </div>
+          <!-- Modal View for Order confirmation  -->
+          <div
+            class="modal fade"
+            id="staticBackdrop"
+            data-backdrop="static"
+            data-keyboard="false"
+            tabindex="-1"
+            aria-labelledby="staticBackdropLabel"
+            aria-hidden="true"
           >
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-body">
+                  <div class="text-right">
+                    <i class="fa fa-close close" data-dismiss="modal"></i>
+                  </div>
+                  <div class="px-4 py-5">
+                    <h5 class="text-uppercase">
+                   </h5>
+                    <h4 class="mt-5 theme-color mb-5">Thanks for your order</h4>
+                    <img
+                      src="https://www.freeiconspng.com/uploads/success-icon-10.png"
+                      class="tick-gif"
+                      alt="Success Tick"
+                    />
+                    <div class="mb-3">
+                      <hr class="new1" />
+                    </div>
+                    <button
+                      class="btn btn-secondary mt-3"
+                      onclick="redirectToHomePage()"
+                    >
+                      Go to Home
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+    
+          <script src="https://js.stripe.com/v3/"></script>
+          <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+          <script>
+            var stripe = Stripe(
+              "pk_test_51PJPlI098w1868DgStq59Ol9oGjPuVzf9Gi8w1aSa3UFFPU4gtKoum5KPA2DymTGWGHDh1p6Hb1JoIrVUb3CsBV700mRl7AgzB"
+            );
+            var elements = stripe.elements();
+    
+            var card = elements.create("card", {
+              hidePostalCode: true,
+              style: {
+                base: {
+                  fontSize: "16px",
+                  color: "#32325d",
+                  "::placeholder": {
+                    color: "#aab7c4",
+                  },
+                },
+                invalid: {
+                  color: "#fa755a",
+                  iconColor: "#fa755a",
+                },
+              },
+            });
+    
+            card.mount("#card-element");
+    
+            card.addEventListener("change", function (event) {
+              var displayError = document.getElementById("card-errors");
+              if (event.error) {
+                displayError.textContent = event.error.message;
+              } else {
+                displayError.textContent = "";
+              }
+            });
+    
+            var form = document.getElementById("payment-form");
+            form.addEventListener("submit", function (event) {
+              event.preventDefault();
+    
+              stripe.createToken(card).then(function (result) {
+                if (result.error) {
+                  var errorElement = document.getElementById("card-errors");
+                  errorElement.textContent = result.error.message;
+                } else {
+                  stripeTokenHandler(result.token);
+                }
+              });
+            });
+    
+            function stripeTokenHandler(token) {
+              var form = document.getElementById("payment-form");
+              var totalAmount = document.getElementById("total_amount").value;
+    
+              var formData = new FormData(form);
+              formData.append("stripeToken", token.id);
+    
+              fetch("", {
+                method: "POST",
+                body: formData,
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  if (data.error) {
+                    var errorElement = document.getElementById("card-errors");
+                    errorElement.textContent = data.error;
+                  } else {
+                    $("#staticBackdrop").modal("show");
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error:", error);
+                });
+            }
+    
+            function redirectToHomePage() {
+              window.location.href = "";
+            }
+          </script>
         </div>
-
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="save-info" />
-          <label class="form-check-label" for="save-info"
-            >Save this information for next time</label
-          >
-        </div>
-
-        <hr class="my-4" />
-
-        <h4 class="mb-3">Payment</h4>
-
-        <div class="my-3">
-          <div class="form-check">
-            <input
-              id="credit"
-              name="paymentMethod"
-              type="radio"
-              class="form-check-input"
-              checked=""
-              required=""
-            />
-            <label class="form-check-label" for="credit">Credit card</label>
-          </div>
-          <div class="form-check">
-            <input
-              id="debit"
-              name="paymentMethod"
-              type="radio"
-              class="form-check-input"
-              required=""
-            />
-            <label class="form-check-label" for="debit">Debit card</label>
-          </div>
-          <div class="form-check">
-            <input
-              id="paypal"
-              name="paymentMethod"
-              type="radio"
-              class="form-check-input"
-              required=""
-            />
-            <label class="form-check-label" for="paypal">PayPal</label>
-          </div>
-        </div>
-
-        <div class="row gy-3">
-          <div class="col-md-6">
-            <label for="cc-name" class="form-label">Name on card</label>
-            <input
-              type="text"
-              class="form-control"
-              id="cc-name"
-              placeholder=""
-              required=""
-            />
-            <small class="text-muted">Full name as displayed on card</small>
-            <div class="invalid-feedback">Name on card is required</div>
-          </div>
-
-          <div class="col-md-6">
-            <label for="cc-number" class="form-label">Credit card number</label>
-            <input
-              type="text"
-              class="form-control"
-              id="cc-number"
-              placeholder=""
-              required=""
-            />
-            <div class="invalid-feedback">Credit card number is required</div>
-          </div>
-
-          <div class="col-md-3">
-            <label for="cc-expiration" class="form-label">Expiration</label>
-            <input
-              type="text"
-              class="form-control"
-              id="cc-expiration"
-              placeholder=""
-              required=""
-            />
-            <div class="invalid-feedback">Expiration date required</div>
-          </div>
-
-          <div class="col-md-3">
-            <label for="cc-cvv" class="form-label">CVV</label>
-            <input
-              type="text"
-              class="form-control"
-              id="cc-cvv"
-              placeholder=""
-              required=""
-            />
-            <div class="invalid-feedback">Security code required</div>
-          </div>
-        </div>
-
-        <hr class="my-4" />
-
-        <button class="w-100 btn btn-dark btn-lg" type="submit">
-          Continue to checkout
-        </button>
-      </form>
-    </div>
-  </div>
-</div>
-
-{% include "footer.html" %}
+      </body>
+    </html>

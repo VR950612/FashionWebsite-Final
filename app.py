@@ -1292,19 +1292,33 @@ def searchdata():
         print(f"An error occurred: {e}")
         return render_template("search_results.html", error="Something went wrong.")
 
-
+@app.route('/user_details')
+def user_details():
+    return render_template("user_details.html")
 
 @app.route('/user_cart')
 def user_cart():
     return render_template("user_cart.html")
 
+@app.route('/user_products')
+def user_products():
+    return render_template("user_products.html")
+
+@app.route('/view_products')
+def view_products():
+    return render_template("view_products.html")
+
+@app.route('/merchant_user_details')
+def user_account():
+    return render_template("/merchant_user_details.html")
+
 @app.route('/user_home')
 def user_home():
     return render_template("user_home.html")
 
-@app.route('/user_nav')
-def user_nav():
-    return render_template("user_nav.html")
+@app.route('/user_navbar')
+def user_navbar():
+    return render_template("user_navbar.html")
 
 
 if __name__ == "__main__":

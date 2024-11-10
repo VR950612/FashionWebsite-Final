@@ -222,14 +222,12 @@ header.masthead {
    ol.update li{ border-bottom:#dedede dashed 1px; text-align:left;padding-top:10px;padding-bottom:10px;}
    ol.update li:first-child{ border-top:#dedede dashed 1px; text-align:left}
 
-   .navbar-inverse
-    {
-        background:#00796B;
-        border-bottom-color: #004D40;
+   .navbar-inverse {
+    background-color: #0e012968 !important;
     }
     .navbar-inverse .navbar-nav>li>a,.navbar-inverse .navbar-brand,.navbar-inverse .navbar-nav>.dropdown>a .caret
     {
-        color: #fff;
+        color: #ffffff;
     }
     .navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:hover, .navbar-inverse .navbar-nav>.open>a:focus,
     .navbar-nav>li>.dropdown-menu

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopping Cart</title>
+    <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+  />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <a
+          class="navbar-brand"
+          href="/"
+          style="font-size: 50px; color: rgba(250, 38, 102, 0.901)"
+        >
+          Fashion Fiesta
+        </a>
+      </div>
+
+      <!-- Main Navbar Links -->
+      <ul
+        class="navbar-nav d-flex flex-row ms-auto"
+        style="padding-right: 80px"
+      >
+        {% if session['logged_in_user'] %}
+        <!-- If user is logged in, show Welcome, Logout, and Categories -->
+        <li class="nav-item">
+          <a href="#"
+            >Welcome, {{ session['logged_in_user'].get('first_name', 'Guest')
+            }}</a
+          >
+        </li>
+
+        <!-- Categories Dropdown (only visible when logged in) -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle custom-font-size"
+            style="margin-right: 60px"
+            href="#"
+            id="navbarDropdown"
+            role="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            Categories
+          </a>
+          <!-- Dropdown menu that appears under "Categories" -->
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/category-name/Dress"
+              ><b>Dresses</b></a
+            >
+            <a class="dropdown-item" href="/category-name/Top"><b>Tops</b></a>
+            <a class="dropdown-item" href="/category-name/Skirt"
+              ><b>Skirts</b></a
+            >
+            <a class="dropdown-item" href="/category-name/Jumpsuit"
+              ><b>Jumpsuits</b></a
+            >
+          </div>
+        </li>
+        {% else %}
+        <!-- If user is not logged in, only show Categories -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle custom-font-size"
+            style="margin-right: 60px"
+            href="#"
+            id="navbarDropdown"
+            role="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            Categories
+          </a>
+          <!-- Dropdown menu for Categories (still available when logged out) -->
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/category-name/Dress"
+              ><b>Dresses</b></a
+            >
+            <a class="dropdown-item" href="/category-name/Top"><b>Tops</b></a>
+            <a class="dropdown-item" href="/category-name/Skirt"
+              ><b>Skirts</b></a
+            >
+            <a class="dropdown-item" href="/category-name/Jumpsuit"
+              ><b>Jumpsuits</b></a
+            >
+          </div>
+        </li>
+        {% endif %}
+
+        <!-- Item in Cart dropdown (this can be shown regardless of login status) -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle custom-font-size"
+            style="margin-right: 60px; white-space: nowrap"
+            href="#"
+            id="navbarDropdown"
+            role="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            Item in Cart
+          </a>
+          <!-- Add cart items dropdown or content here -->
+        </li>
+      </ul>
+    </nav>
+    <style>
+      html,
+      body {
+        height: 170%;
+        margin: 0;
+        background-color: #222;
+      }
+
+      .navbar {
+        margin-bottom: 20px;
+      }
+
+      .nav {
+        border-right: 1px solid white;
+      }
+
+      .form-container {
+        padding: 40px 20px; /* Add top padding */
+        border-radius: 5px;
+      }
+
+      .form-container h1 {
+        margin-bottom: 10px;
+      }
+
+      .table-custom {
+        max-width: 850px;
+        width: 100%;
+        margin-left: 60px;
+        margin-right: 0px;
+      }
+
+      .btn-margin {
+        margin-top: 10px;
+      }
+
+      .custom-font-size {
+        font-size: 14px;
+      }
+      .nav-item .nav-link {
+        color: white !important;
+        text-align: left;
+      }
+
+      .navbar .dropdown-menu {
+        background-color: #222 !important;
+        border: none;
+      }
+
+      .navbar .dropdown-item {
+        color: white !important;
+        background-color: #222 !important;
+      }
+      .navbar .dropdown-item:hover,
+      .navbar .dropdown-item:focus {
+        background-color: #222 !important;
+        color: white !important;
+      }
+      .navbar-nav .nav-item {
+        white-space: nowrap;
+      }
+      .nav-link {
+        font-size: 17px;
+        color: white;
+      }
+    </style>
+</head>
+<body>
+   <div class="container-fluid">
+       <div class="row">
+           <!-- Side Navigation -->
+           <div class="col-lg-2 col-md-3 col-sm-4 col-12 mt-5">
+               <ul class="nav flex-column">
+                   <li class="nav-item">
+                       <a href="" class="nav-link text-white" style="font-size: 17px;">
+                           <i class=""></i> Change Password
+                       </a>
+                   </li>
+               <li class="nav-item">
+                   <a href="" class="nav-link text-white" style="font-size: 17px;">
+                       <i class=""></i> My Details
+                   </a>
+               </li>
+               <li class="nav-item">
+                   <a href="#" class="nav-link text-white" style="font-size: 17px;">
+                       <i class=""></i> My Orders
+                   </a>
+               </li>
+               <li class="nav-item">
+                   <a href="/logout" class="nav-link text-white" style="font-size: 17px;">
+                       <i class="fa fa-sign-out-alt"></i> Logout
+                   </a>
+               </li>
+           </ul>
+       </div>
+   </div>
+    <div class="container">
+      <div class="row">
+        <div
+          class="col-md-10 main-content align-items-center justify-content-center"
+          style="margin-left: 200px"
+        >
+          <div class="col-xl-7 col-lg-8 col-md-9 col-11 text-center">
+            <h3>My Account Details</h3>
+            <div class="cards">
+              <form class="form-card" id="edit_Form" method="POST" action="">
+                <div class="form-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="firstname"
+                    placeholder="Enter First name"
+                    value=""
+                    disabled
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="lastname"
+                    placeholder="Enter Last name"
+                    value=""
+                    disabled
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    type="email"
+                    class="form-control"
+                    name="email"
+                    placeholder="Enter Email address"
+                    value=""
+                    disabled
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="mobile"
+                    placeholder="Enter phone number"
+                    value=""
+                    disabled
+                  />
+                </div>
+                <!-- Save Changes button -->
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  id="saveButton"
+                  disabled
+                >
+                  Save Changes
+                </button>
+                <!-- Edit button -->
+                <button type="button" class="btn btn-secondary" id="editButton">
+                  Edit
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Success message modal -->
+    <div
+      class="modal fade"
+      id="successModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="successModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="successModalLabel">Success</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Your changes have been saved successfully.
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script>
+      // Function to toggle input field disable/enable
+      function toggleInputs(enable) {
+        var inputs = document.querySelectorAll(
+          'input[type="text"], input[type="email"]'
+        );
+        inputs.forEach(function (input) {
+          input.disabled = !enable;
+        });
+        // Toggle the disabled attribute of the buttons
+        document.getElementById("saveButton").disabled = !enable;
+      }
+
+      // Add event listener to the "Edit" button
+      document
+        .getElementById("editButton")
+        .addEventListener("click", function () {
+          toggleInputs(true);
+        });
+
+      // Show success message after form submission
+      $("#edit_Form").on("submit", function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Submit the form via AJAX
+        $.ajax({
+          type: "POST",
+          url: $(this).attr("action"),
+          data: new FormData(this),
+          processData: false,
+          contentType: false,
+          success: function (response) {
+            // Show success modal
+            $("#successModal").modal("show");
+            // Disable input fields after successful submission
+            toggleInputs(false);
+          },
+          error: function (response) {
+            alert("An error occurred. Please try again.");
+          },
+        });
+      });
+    </script>
+  </body>
+</html>
