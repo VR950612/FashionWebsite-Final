@@ -32,38 +32,21 @@
       rel="stylesheet"
     />
     <style>
-      /* Add custom styles here if necessary */
+      .user-welcome {
+        color: #3498db;
+        font-weight: bold;
+      }
+
+      .logout-link {
+        color: #3498db !important;
+        text-decoration: none !important;
+      }
+
+      .logout-link:hover {
+        text-decoration: underline !important;
+      }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script type="text/javascript">
-      $(function () {
-        $(".search_button").click(function () {
-          var search_word = $("#search_box").val();
-          if (search_word.trim() !== "") {
-            $.ajax({
-              type: "POST",
-              url: "searchdata",
-              data: { search_word: search_word },
-              cache: false,
-              beforeSend: function () {
-                $("#insert_search").empty(); // Clear previous search results
-                $("#flash").show(); // Show the flash element (loading indicator?)
-                $("#search_word").show(); // Show the search word element
-                $(".search_word").text(search_word); // Display the search word
-              },
-              success: function (response) {
-                $("#insert_search").show().append(response.data); // Append the data received from the server
-                $("#flash").hide(); // Hide the loading indicator after the request completes
-              },
-              error: function (xhr, status, error) {
-                console.error("Error: " + error); // Log any error from the AJAX request
-              },
-            });
-          }
-          return false; // Prevent form submission or page reload
-        });
-      });
-    </script>
   </head>
 
   <body>
@@ -74,8 +57,9 @@
           class="navbar-brand"
           href="/"
           style="color: rgba(250, 38, 102, 0.901)"
-          >Fashion Fiesta</a
         >
+          Fashion Fiesta
+        </a>
         <div class="d-flex">
           <a class="btn btn-link text-reset" href="/wishlist"
             ><i class="fa-solid fa-heart fa-2xl"></i
@@ -135,16 +119,19 @@
             </button>
           </form>
 
-          <ul class="navbar-nav d-flex flex-row ms-auto">
+          <!-- User Account Links -->
+          <ul class="navbar-nav ms-auto d-flex flex-row align-items-center">
             {% if session['logged_in_user'] %}
-            <li>
-              <a href="#">
-                Welcome, {{ session['logged_in_user'].get('first_name',
-                'Guest')}}</a
+            <li class="nav-item">
+              <span class="navbar-text user-welcome"
+                >Welcome, {{ session['logged_in_user'].get('first_name',
+                'Guest') }}</span
               >
             </li>
             <li class="nav-item">
-              <a class="btn btn-link text-reset" href="/logout">Logout</a>
+              <a class="btn btn-link text-reset logout-link" href="/logout"
+                >Logout</a
+              >
             </li>
             {% else %}
             <li class="nav-item">
@@ -161,6 +148,7 @@
         </div>
       </div>
     </nav>
+
     <div id="flash" style="display: none"></div>
     <div id="insert_search"></div>
 

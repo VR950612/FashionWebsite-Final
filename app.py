@@ -6,7 +6,8 @@ from werkzeug.utils import secure_filename
 from datetime import datetime as dt
 from flask import Flask, flash
 from datetime import datetime, timezone
-
+from urllib.parse import quote_plus 
+from werkzeug.security import generate_password_hash
 
 import requests, json, os
 import stripe
@@ -1246,12 +1247,14 @@ def searchdata():
     search_word = request.args.get('search_word', '')  # Default to empty string if not provided
     print(f"Search word: {search_word}")
     
-    # Construct the API URL based on the search term
-    RANDOM_PRODUCTS_URL = PRODUCT_CATEGORY_API_BASE_URL + "random-product-set"
-    
-    # Add the search_word parameter to the URL if it's provided
-    if search_word:
-        RANDOM_PRODUCTS_URL += f"?category_name={search_word}"
+    # If no search word is provided, return an error message
+    if not search_word:
+        return render_template("search_results.html", error="Search term is required.")
+
+    # URL encode the search term to handle special characters
+    encoded_search_word = quote_plus(search_word)  # URL encode the search term
+    API_URL = f"{PRODUCT_CATEGORY_API_BASE_URL}product_category_by_name/{encoded_search_word}"
+    print(f"Constructed API URL: {API_URL}")
 
     headers = {
         'Content-type': 'application/json',
@@ -1259,39 +1262,36 @@ def searchdata():
     }
 
     try:
-        # Make the API requests with the updated URL
-        random_products_response_one = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
-        random_products_response_two = requests.get(RANDOM_PRODUCTS_URL, headers=headers)
+        # Make the API request to fetch products by category name
+        response = requests.get(API_URL, headers=headers)
 
-        # Check if API requests were successful
-        if random_products_response_one.status_code == 200 and random_products_response_two.status_code == 200:
+        # Check if the API request was successful (status code 200)
+        if response.status_code == 200:
             # Parse the JSON response from the API
-            random_products_response_one_data = random_products_response_one.json()
-            random_products_response_two_data = random_products_response_two.json()
+            products_data = response.json()
 
-            # Check if both API responses have no products
-            if not random_products_response_one_data and not random_products_response_two_data:
+            # Check if no products were found for the given category
+            if not products_data.get('products'):
                 return render_template("search_results.html", error="No products found matching your search criteria.")
             
             # Render the template with the fetched data
-            return render_template("search_results.html",
-                                   random_products_one=random_products_response_one_data,
-                                   random_products_two=random_products_response_two_data)
+            return render_template("search_results.html", products=products_data['products'])
 
         else:
-            print("API request failed with status codes", random_products_response_one.status_code, random_products_response_two.status_code)
-            return render_template("search_results.html", error="API request failed.")
+            # Handle API failure status codes (non-200 responses)
+            print(f"API request failed with status code {response.status_code}")
+            return render_template("search_results.html", error="Failed to fetch products from the API.")
     
     except requests.exceptions.RequestException as e:
-        # Handle network-related errors
+        # Handle network-related errors (e.g., timeout, connection error)
         print(f"Request failed: {e}")
-        return render_template("search_results.html", error="API request failed.")
+        return render_template("search_results.html", error="Error occurred while fetching data from the API.")
     
     except Exception as e:
-        # Handle any other unexpected errors
+        # Handle unexpected errors (e.g., issues in parsing, or logic errors)
         print(f"An error occurred: {e}")
         return render_template("search_results.html", error="Something went wrong.")
-
+    
 @app.route('/user_details')
 def user_details():
     return render_template("user_details.html")
@@ -1308,10 +1308,50 @@ def user_products():
 def view_products():
     return render_template("view_products.html")
 
-@app.route('/merchant_user_details')
-def user_account():
-    return render_template("/merchant_user_details.html")
+@app.route('/merchant_user_details', methods=['POST', 'GET'])
+def merchant_user_details():
+    try:
+        # Check if the merchant is logged in
+        if 'logged_in_merchant' not in session:
+            flash('You need to log in first.', 'danger')
+            return redirect(url_for('login'))  # Redirect to the login page if not logged in
+        
+        if request.method == 'POST':
+            first_name = request.form['first_name']
+            last_name = request.form['last_name']
+            email = request.form['email']
+            password = request.form['password']
 
+            # Check if the password is not empty and hash it
+            if password:
+                hashed_password = generate_password_hash(password)
+            else:
+                hashed_password = None  # Don't change the password if it's empty
+
+            # Simulate updating merchant details
+            logged_in_merchant = session.get('logged_in_merchant', {})
+            logged_in_merchant.update({
+                'first_name': first_name,
+                'last_name': last_name,
+                'email': email,
+                'password': hashed_password if hashed_password else logged_in_merchant.get('password')
+            })
+
+            # Update session with new details
+            session['logged_in_merchant'] = logged_in_merchant
+
+            flash('Merchant details updated successfully!', 'success')
+            print(f"Updated session: {session['logged_in_merchant']}")  # Log the session
+
+            return redirect(url_for('merchant_user_details'))
+        
+        # For GET request, render the current details
+        return render_template('merchant_user_details.html', merchant=session.get('logged_in_merchant', {}))
+    
+    except Exception as e:
+        flash(f"Error: {str(e)}", 'error')
+        return redirect(url_for('merchant_user_details'))
+ 
 @app.route('/user_home')
 def user_home():
     return render_template("user_home.html")
