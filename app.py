@@ -644,9 +644,7 @@ def single_product(product_id):
     except:
         print("Whoops something went wrong here!")    
     return render_template("product_details.html")
-
-          
-
+     
 # @app.route('/sale_dresses')
 # def sale_dresses():
 #     return render_template("sale_dresses.html")
@@ -869,7 +867,7 @@ def merchant_addnewcategory():
         # Render the template for the form
         return render_template('merchant_addnewcategory.html')
 
- #edit/update product
+#edit/update product
 @app.route('/edit_product_category/<int:id>', methods=['GET', 'POST'])
 def edit_product_category(id):
     product_category_id = id
@@ -936,7 +934,7 @@ def update_category(category_id, category_name, category_code):
         print("Update failed:", response.status_code, response.text)  # Log error for debugging
         return False
 
-#Update a Product_Category
+#Update a product category
 @app.route('/product_category_old/<int:id>', methods=['POST'])
 def update_category_old(id):
     # Fetch the current category details if needed (optional)
@@ -1198,7 +1196,7 @@ def update_product(product_id, product_name, product_category, product_display_t
         return False
 
 
-# Delete product
+# delete product
 @app.route('/delete-product/<int:product_id>', methods=['POST'])
 def delete_product(product_id):
     # Construct the URL for deleting the product
@@ -1231,8 +1229,7 @@ def delete_product(product_id):
             'message': f'Error occurred while trying to delete the product: {e}'
         }), 500  # Return 500 Internal Server Error if there is an exception
     
-    
-
+#shopping cart
 @app.route('/shopping_cart')
 def shopping_cart():
     return render_template("shopping_cart.html")
@@ -1241,10 +1238,11 @@ def shopping_cart():
 # def merchant_nav():
 #     return render_template("merchant_nav.html")
 
+#search products
 @app.route('/searchdata', methods=['GET'])
 def searchdata():
     # Get the search term from the query string (the 'search_word' parameter)
-    search_word = request.args.get('search_word', '')  # Default to empty string if not provided
+    search_word = request.args.get('search_word', '')  
     print(f"Search word: {search_word}")
     
     # If no search word is provided, return an error message
@@ -1285,29 +1283,30 @@ def searchdata():
     except requests.exceptions.RequestException as e:
         # Handle network-related errors (e.g., timeout, connection error)
         print(f"Request failed: {e}")
-        return render_template("search_results.html", error="Error occurred while fetching data from the API.")
+        return render_template("search_results.html",error="Error occurred  while fetching data from the API.")
     
     except Exception as e:
         # Handle unexpected errors (e.g., issues in parsing, or logic errors)
         print(f"An error occurred: {e}")
         return render_template("search_results.html", error="Something went wrong.")
     
-@app.route('/user_details')
-def user_details():
-    return render_template("user_details.html")
+#@app.route('/user_details')
+#def user_details():
+#    return render_template("user_details.html")
 
-@app.route('/user_cart')
-def user_cart():
-    return render_template("user_cart.html")
+#@app.route('/user_cart')
+#def user_cart():
+#    return render_template("user_cart.html")
 
-@app.route('/user_products')
-def user_products():
-    return render_template("user_products.html")
+#@app.route('/user_products')
+#def user_products():
+#    return render_template("user_products.html")
 
-@app.route('/view_products')
-def view_products():
-    return render_template("view_products.html")
+#@app.route('/view_products')
+#def view_products():
+#    return render_template("view_products.html")
 
+#merchant admin login account details
 @app.route('/merchant_user_details', methods=['POST', 'GET'])
 def merchant_user_details():
     try:
@@ -1352,13 +1351,13 @@ def merchant_user_details():
         flash(f"Error: {str(e)}", 'error')
         return redirect(url_for('merchant_user_details'))
  
-@app.route('/user_home')
-def user_home():
-    return render_template("user_home.html")
+#@app.route('/user_home')
+#def user_home():
+#    return render_template("user_home.html")
 
-@app.route('/user_navbar')
-def user_navbar():
-    return render_template("user_navbar.html")
+#@app.route('/user_navbar')
+#def user_navbar():
+#    return render_template("user_navbar.html")
 
 
 if __name__ == "__main__":

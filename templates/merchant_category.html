@@ -61,8 +61,32 @@
         });
       });
     </script>
+    <style>
+        .welcome-user,
+        .logout-link {
+          font-size: 35px; 
+          font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+          font-weight: 600;
+          text-decoration: none !important;
+          color: white;
+          display: flex; 
+          align-items: center;
+        }
+        .welcome-user {
+          font-size: 35px;
+          margin-left: 250px;
+        }
+        .logout-link i {
+            font-size: 30px; 
+            color: white;
+            margin-right: 20px; 
+        }
+        .logout-link:hover,
+        .welcome-user:hover {
+          color: white;
+        }
+    </style>
   </head>
-
   <body>
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -74,10 +98,11 @@
           >Fashion Fiesta</a
         >
       </div>
-      <ul class="navbar-nav d-flex flex-row ms-auto">
-            Hello, {{ session['logged_in_merchant'].get('first_name', 'Guest') }}!
-         <li class="nav-item">
-        <a class="btn btn-link text-reset" href="/merchant_logout">Logout</a>
+      <ul class="navbar-nav d-flex flex-row text-white">
+        <li class="nav-item">
+          <a class="btn btn-link text-reset logout-link" href="/merchant_logout">
+            <i class="fas fa-sign-out-alt"></i><span> Logout</span>
+          </a>
         </li>
       </ul>
    </div>
@@ -101,6 +126,11 @@
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
   <body>
+    <ul class="navbar-nav d-flex flex-row ms-auto text-white">
+        <li class="nav-item">
+          <span class="welcome-user">Hello, {{ session['logged_in_merchant'].get('first_name', 'Guest') }}!</span>
+        </li>
+      </ul>
     <div class="container-fluid">
       <div class="row">
           <!-- Side Navigation -->
@@ -108,7 +138,7 @@
             <ul class="nav nav-pills nav-stacked" style="border-right: 1px solid white; padding-right: 20x;">
                 <li>
                     <a href="#" class="text-white" style="font-size: 25px;">
-                        <i class=""></i><br>Add New Category
+                        <i class=""></i><br>Add New Product Category
                     </a>
                 </li>
                 <li>
