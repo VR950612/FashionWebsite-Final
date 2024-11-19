@@ -1,4 +1,27 @@
 <!-- Delete Product Modal code -->
+<style>
+  @media (max-width: 600px) {
+    .container {
+      width: 80%;
+      margin: 10% auto;
+      padding: 20px;
+    }
+  }
+  .modal-content {
+    padding: 20px;
+  }
+  .container {
+    background-color: #ffffff;
+    max-width: 500px;
+    width: 80%;
+    height: 200px;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 5px;
+    overflow-y: auto;
+  }
+</style>
+
 <div id="delete_product_modal_{{ product.id }}" class="modal">
   <span
     onclick="document.getElementById('delete_product_modal_{{ product.id }}').style.display='none'"

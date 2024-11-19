@@ -465,7 +465,7 @@ def register():
         
     return render_template("register.html")
 
-#Merchant Admin Login 
+#merchant login 
 @app.route('/merchant_login', methods=['GET', 'POST'])
 def merchant_login():
     if request.method == 'POST':
@@ -540,7 +540,7 @@ def login_merchant(merchant):
         'password': merchant.password
     }        
 
-#Merchant admin signup
+#Merchant signup
 @app.route('/merchant_signup', methods=['GET','POST'])
 def merchant_signup():
     print("DOES IT EVEN COME HERE FIRST????")
@@ -601,7 +601,7 @@ def logout():
     flash("You have been logged out.", "info")
     return redirect(url_for('index'))
 
-#Merchant admin logout
+#Merchant logout
 @app.route('/merchant_logout')
 def merchant_logout():
     session.pop("logged_in_merchant", None)
@@ -707,7 +707,7 @@ def stripe_checkout(product_id):
     return render_template("stripe_checkout.html")
 
 
-#view all categories
+#view all product categories
 @app.route('/admin_all_categories')
 def merchant_show_categories():
     ALL_PRODUCT_CATEGORIES_URL = PRODUCT_CATEGORY_API_BASE_URL + "all_product_categories"
@@ -805,7 +805,7 @@ def categories():
     return render_template('categories.html', categories=categories, name=name, password=password)
 
 
-#merchant admin add new category
+#merchant add new product category
 @app.route('/merchant_addnewcategory', methods=['GET', 'POST'])
 def merchant_addnewcategory():
     success = False
@@ -867,7 +867,7 @@ def merchant_addnewcategory():
         # Render the template for the form
         return render_template('merchant_addnewcategory.html')
 
-#edit/update product
+#edit/update product category
 @app.route('/edit_product_category/<int:id>', methods=['GET', 'POST'])
 def edit_product_category(id):
     product_category_id = id
@@ -990,7 +990,7 @@ def delete_category(category_id):
             'message': f'Error occurred while trying to delete the category: {e}'
         }), 500
 
-# #merchant admin view all products by selected category
+# #merchant view all products by selected category
 @app.route('/merchant_viewproducts/<int:category_id>', methods=['GET'])
 def merchant_viewproducts(category_id):
     product_category_id = category_id
@@ -1026,7 +1026,7 @@ def merchant_viewproducts(category_id):
         return render_template("merchant_viewproducts.html", products=None, product_category_id=product_category_id)
 
    
-#merchant admin add new product
+#merchant add new product
 @app.route('/merchant_add_product_to_category/<int:category_id>', methods=['GET', 'POST'])
 def merchant_add_product_to_category(category_id):
     success = False
@@ -1242,7 +1242,7 @@ def shopping_cart():
 @app.route('/searchdata', methods=['GET'])
 def searchdata():
     # Get the search term from the query string (the 'search_word' parameter)
-    search_word = request.args.get('search_word', '')  
+    search_word = request.args.get('search_word', '')
     print(f"Search word: {search_word}")
     
     # If no search word is provided, return an error message
@@ -1306,7 +1306,7 @@ def searchdata():
 #def view_products():
 #    return render_template("view_products.html")
 
-#merchant admin login account details
+#merchant login account details
 @app.route('/merchant_user_details', methods=['POST', 'GET'])
 def merchant_user_details():
     try:
